@@ -223,7 +223,7 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .shop-item:active { background: var(--bg3); }
 .shop-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .shop-check.checked { background: var(--accent); border-color: var(--accent); }
-.shop-check.checked::after { content: '✓'; font-size: 11px; color: #000; font-weight: 700; }
+.shop-check.checked::after { content: ''; display: block; width: 5px; height: 9px; border-right: 2.5px solid #000; border-bottom: 2.5px solid #000; transform: rotate(45deg) translateY(-1px); }
 .shop-name { font-size: 14px; color: var(--text); }
 .shop-item.checked .shop-name { color: var(--dim); text-decoration: line-through; }
 .shop-have { font-size: 11px; color: var(--dim); margin-left: auto; }
@@ -306,6 +306,45 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .week-label { font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px; }
 .page { display: none; }
 .page.active { display: block; }
+
+/* ===== INTEGRATED COOK MODE ===== */
+.cook-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 300; display: flex; flex-direction: column; overflow: hidden; }
+.cook-overlay.hidden { display: none; }
+.cook-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.cook-title { font-size: 17px; font-weight: 700; color: var(--text); flex: 1; margin-right: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cook-close { background: var(--bg3); border: none; color: var(--text); font-size: 16px; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
+.cook-body { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; }
+.cook-timer-big { text-align: center; background: var(--bg2); border-radius: 18px; padding: 1.5rem 1.25rem; }
+.cook-timer-big .ctimer-display { font-size: 60px; font-weight: 800; color: var(--accent); letter-spacing: 3px; font-variant-numeric: tabular-nums; line-height: 1; }
+.cook-timer-big .ctimer-display.timer-done { color: var(--green) !important; animation: pulse 0.5s ease infinite alternate; }
+.cook-timer-big .ctimer-controls { display: flex; gap: 10px; justify-content: center; margin-top: 1rem; }
+.cook-timer-big .ctimer-btn { padding: 10px 26px; border-radius: 10px; border: 1px solid var(--line2); background: var(--bg4); color: var(--text); font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Jost', sans-serif; transition: background 0.15s; }
+.cook-timer-big .ctimer-btn.active { background: var(--accent); color: #000; border-color: transparent; }
+.cook-timer-big .ctimer-presets { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 0.75rem; }
+.cook-timer-big .ctimer-preset { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--line2); background: var(--bg4); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Jost', sans-serif; transition: all 0.15s; }
+.cook-timer-big .ctimer-preset.active, .cook-timer-big .ctimer-preset:hover { color: var(--accent); border-color: var(--accent); }
+.cook-section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); margin-bottom: 0.5rem; }
+.cook-ings { background: var(--bg2); border-radius: 14px; overflow: hidden; }
+.cook-ing-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); cursor: pointer; transition: opacity 0.15s; }
+.cook-ing-item:last-child { border-bottom: none; }
+.cook-ing-item.checked { opacity: 0.4; }
+.cook-ing-item.checked .cook-ing-name { text-decoration: line-through; }
+.cook-check-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--dim); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.cook-ing-item.checked .cook-check-circle { background: var(--accent); border-color: var(--accent); }
+.cook-ing-item.checked .cook-check-circle::after { content: ''; display: block; width: 5px; height: 9px; border-right: 2.5px solid #000; border-bottom: 2.5px solid #000; transform: rotate(45deg) translateY(-1px); }
+.cook-ing-name { font-size: 14px; color: var(--text); }
+.cook-steps { display: flex; flex-direction: column; gap: 10px; }
+.cook-step { display: flex; gap: 12px; background: var(--bg2); border-radius: 12px; padding: 14px; cursor: pointer; transition: opacity 0.15s; }
+.cook-step.done { opacity: 0.4; }
+.cook-step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #000; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.cook-step.done .cook-step-num { background: var(--bg4); color: var(--dim); }
+.cook-step-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+.cook-step.done .cook-step-text { text-decoration: line-through; color: var(--dim); }
+.cook-log-btn { width: 100%; padding: 15px; background: var(--accent); color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; font-family: 'Jost', sans-serif; cursor: pointer; margin-bottom: 1.5rem; }
+.btn-start-cooking { width: 100%; padding: 14px; background: var(--bg3); color: var(--text); border: 1.5px solid var(--accent); border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 0.5rem; font-family: 'Jost', sans-serif; }
+/* AUTO-DEMO */
+.demo-fab { position: fixed; bottom: 88px; right: 16px; background: var(--bg3); border: 1px solid var(--line2); color: var(--muted); font-size: 11px; font-weight: 700; padding: 7px 13px; border-radius: 20px; cursor: pointer; z-index: 200; font-family: 'Jost', sans-serif; letter-spacing: 0.5px; transition: all 0.2s; }
+.demo-fab.running { background: var(--accent); color: #000; border-color: transparent; }
 </style>
 </head>
 <body>
@@ -447,12 +486,51 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
         </div>
       </div>
     </div>
-    <button class="btn-cook" id="d-cook" onclick="this.textContent='✓ Logged!';this.style.background='#22c55e';this.style.color='#000';setTimeout(()=>{this.textContent='✓ Mark as Cooked Today';this.style.background='';this.style.color='';},2000);logCurrentRecipe()">✓ Mark as Cooked Today</button>
+    <button class="btn-cook" id="d-cook" onclick="logCurrentRecipe()">Mark as Cooked Today</button>
+    <button class="btn-start-cooking" onclick="openCookMode()">&#128338; Start Cooking</button>
     <button id="d-edit" onclick="editCurrentRecipe()" style="display:none;width:100%;padding:11px;background:transparent;border:1px solid var(--line2);border-radius:12px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;margin-top:0.5rem;font-family:'Jost',sans-serif;">✏️ Edit Recipe</button>
     <button id="d-shop" onclick="addRecipeToShop();event.stopPropagation()" style="width:100%;padding:14px;background:var(--bg2);color:var(--accent);border:1.5px solid var(--accent);border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:0.75rem;font-family:'Jost',sans-serif;">+ Add Ingredients to Shopping List</button>
     <button id="d-delete" class="btn-delete" onclick="deleteCurrentRecipe()">Delete Recipe</button>
   </div>
 </div>
+
+<!-- COOK MODE OVERLAY -->
+<div class="cook-overlay hidden" id="cook-overlay">
+  <div class="cook-header">
+    <div class="cook-title" id="cook-mode-title">Cook Mode</div>
+    <button class="cook-close" onclick="closeCookMode()">&#10005;</button>
+  </div>
+  <div class="cook-body">
+    <div class="cook-timer-big">
+      <div class="timer-label">Cook Timer</div>
+      <div class="ctimer-display" id="ctimer-display">00:00</div>
+      <div class="ctimer-controls">
+        <button class="ctimer-btn" id="ctimer-start" onclick="cookTimerToggle()">Start</button>
+        <button class="ctimer-btn" onclick="cookTimerReset()">Reset</button>
+      </div>
+      <div class="ctimer-presets">
+        <button class="ctimer-preset" onclick="cookTimerSet(5,this)">5m</button>
+        <button class="ctimer-preset" onclick="cookTimerSet(10,this)">10m</button>
+        <button class="ctimer-preset" onclick="cookTimerSet(15,this)">15m</button>
+        <button class="ctimer-preset" onclick="cookTimerSet(20,this)">20m</button>
+        <button class="ctimer-preset" onclick="cookTimerSet(30,this)">30m</button>
+        <button class="ctimer-preset" onclick="cookTimerSet(45,this)">45m</button>
+      </div>
+    </div>
+    <div>
+      <div class="cook-section-title">Ingredients</div>
+      <div class="cook-ings" id="cook-ings"></div>
+    </div>
+    <div>
+      <div class="cook-section-title">Steps</div>
+      <div class="cook-steps" id="cook-steps"></div>
+    </div>
+    <button class="cook-log-btn" id="cook-log-btn" onclick="cookModeLog()">Mark as Cooked Today</button>
+  </div>
+</div>
+
+<!-- AUTO-DEMO FAB -->
+<button class="demo-fab" id="demo-btn" onclick="toggleAutoDemo()">&#9654; Demo</button>
 
 <!-- ADD MODAL -->
 <div class="modal-overlay" id="modal-overlay">
@@ -742,12 +820,12 @@ function logCurrentRecipe() {
   };
   cookLog.unshift(entry);
   save();
-  document.getElementById('d-cook').textContent = '✓ Logged!';
-  document.getElementById('d-cook').style.background = 'var(--green)';
-  setTimeout(() => {
-    document.getElementById('d-cook').textContent = '✓ Mark as Cooked Today';
-    document.getElementById('d-cook').style.background = 'var(--accent)';
-  }, 2000);
+  const cookBtn = document.getElementById('d-cook');
+  if (cookBtn) {
+    cookBtn.textContent = 'Logged!';
+    cookBtn.style.background = 'var(--green)';
+    setTimeout(() => { cookBtn.textContent = 'Mark as Cooked Today'; cookBtn.style.background = ''; }, 2000);
+  }
   renderLog();
 }
 
@@ -1327,6 +1405,142 @@ document.addEventListener('visibilitychange', () => {
 });
 
 console.log("Ever's Menu — PWA ready, offline-capable, wake lock enabled");
+
+// ===== INTEGRATED COOK MODE =====
+let cookTimerInterval = null;
+let cookTimerSeconds = 0;
+let cookTimerRunning = false;
+let cookTimerCountdown = false;
+let cookTimerTarget = 0;
+
+function openCookMode() {
+  const r = recipes.find(x => x.id === currentRecipeId);
+  if (!r) return;
+  requestWakeLock();
+  document.getElementById('cook-mode-title').textContent = r.name;
+  cookTimerReset();
+  if (r.time) {
+    const tmHr = r.time.match(/(\d+)\s*(?:hr|hour)/i);
+    const tm = r.time.match(/(\d+)\s*min/i);
+    const hrs = tmHr ? parseInt(tmHr[1]) : 0;
+    const mins = tm ? parseInt(tm[1]) : 0;
+    const total = hrs * 60 + mins;
+    if (total > 0) cookTimerSet(total, null);
+  }
+  const ingsEl = document.getElementById('cook-ings');
+  ingsEl.innerHTML = (r.ings || []).map((ing, i) => {
+    const [amt, name] = Array.isArray(ing) ? ing : [ing, ''];
+    return `<div class="cook-ing-item" id="cing-${i}" onclick="this.classList.toggle('checked')">
+      <div class="cook-check-circle"></div>
+      <div class="cook-ing-name">${name ? `<b>${name}</b> ${amt}` : amt}</div>
+    </div>`;
+  }).join('');
+  const stepsEl = document.getElementById('cook-steps');
+  stepsEl.innerHTML = (r.steps || []).map((step, i) => `
+    <div class="cook-step" id="cstep-${i}" onclick="this.classList.toggle('done')">
+      <div class="cook-step-num">${i + 1}</div>
+      <div class="cook-step-text">${step}</div>
+    </div>`).join('');
+  const logBtn = document.getElementById('cook-log-btn');
+  if (logBtn) { logBtn.textContent = 'Mark as Cooked Today'; logBtn.style.background = ''; }
+  document.getElementById('cook-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCookMode() {
+  document.getElementById('cook-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  cookTimerReset();
+  releaseWakeLock();
+}
+
+function cookModeLog() {
+  logCurrentRecipe();
+  const btn = document.getElementById('cook-log-btn');
+  btn.textContent = 'Logged!';
+  btn.style.background = 'var(--green, #22c55e)';
+  setTimeout(() => { btn.textContent = 'Mark as Cooked Today'; btn.style.background = ''; }, 2000);
+}
+
+function cookTimerFmt(s) {
+  const m = Math.floor(Math.abs(s) / 60), sec = Math.abs(s) % 60;
+  return (s < 0 ? '-' : '') + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+function cookTimerTick() {
+  const disp = document.getElementById('ctimer-display');
+  const btn = document.getElementById('ctimer-start');
+  if (!disp) return;
+  if (cookTimerCountdown) {
+    cookTimerSeconds--;
+    if (cookTimerSeconds <= 0) {
+      cookTimerSeconds = 0;
+      clearInterval(cookTimerInterval); cookTimerRunning = false;
+      disp.textContent = 'Done!'; disp.classList.add('timer-done');
+      btn.textContent = 'Start'; btn.classList.remove('active');
+      if ('vibrate' in navigator) navigator.vibrate([300,100,300]);
+      return;
+    }
+  } else { cookTimerSeconds++; }
+  disp.textContent = cookTimerFmt(cookTimerSeconds);
+  disp.classList.remove('timer-done');
+}
+function cookTimerToggle() {
+  const btn = document.getElementById('ctimer-start');
+  const disp = document.getElementById('ctimer-display');
+  if (!btn || !disp) return;
+  if (cookTimerRunning) {
+    clearInterval(cookTimerInterval); cookTimerRunning = false;
+    btn.textContent = 'Resume'; btn.classList.remove('active');
+  } else {
+    if (disp.textContent === 'Done!') { cookTimerReset(); return; }
+    cookTimerInterval = setInterval(cookTimerTick, 1000);
+    cookTimerRunning = true; btn.textContent = 'Pause'; btn.classList.add('active');
+  }
+}
+function cookTimerReset() {
+  clearInterval(cookTimerInterval); cookTimerRunning = false;
+  cookTimerSeconds = cookTimerCountdown ? cookTimerTarget : 0;
+  cookTimerCountdown = false; cookTimerTarget = 0;
+  const disp = document.getElementById('ctimer-display');
+  const btn = document.getElementById('ctimer-start');
+  if (disp) { disp.textContent = '00:00'; disp.classList.remove('timer-done'); }
+  if (btn) { btn.textContent = 'Start'; btn.classList.remove('active'); }
+}
+function cookTimerSet(minutes, el) {
+  clearInterval(cookTimerInterval); cookTimerRunning = false;
+  cookTimerCountdown = true; cookTimerTarget = minutes * 60; cookTimerSeconds = cookTimerTarget;
+  const disp = document.getElementById('ctimer-display');
+  const btn = document.getElementById('ctimer-start');
+  if (disp) { disp.textContent = cookTimerFmt(cookTimerSeconds); disp.classList.remove('timer-done'); }
+  if (btn) { btn.textContent = 'Start'; btn.classList.remove('active'); }
+  document.querySelectorAll('.ctimer-preset').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// ===== AUTO-DEMO TIMER =====
+let demoInterval = null;
+let demoIdx = 0;
+function toggleAutoDemo() {
+  if (demoInterval) { stopAutoDemo(); return; }
+  const btn = document.getElementById('demo-btn');
+  if (btn) { btn.textContent = '&#9646;&#9646; Demo'; btn.classList.add('running'); }
+  demoIdx = 0;
+  runDemoStep();
+  demoInterval = setInterval(runDemoStep, 5000);
+}
+function runDemoStep() {
+  if (!recipes || recipes.length === 0) { stopAutoDemo(); return; }
+  const r = recipes[demoIdx % recipes.length];
+  demoIdx++;
+  // Close cook overlay if open, then show next recipe
+  if (!document.getElementById('cook-overlay').classList.contains('hidden')) closeCookMode();
+  showDetail(r.id);
+}
+function stopAutoDemo() {
+  clearInterval(demoInterval); demoInterval = null;
+  const btn = document.getElementById('demo-btn');
+  if (btn) { btn.innerHTML = '&#9654; Demo'; btn.classList.remove('running'); }
+}
 
 // Serving scaler
 let _baseIngredients = [];
