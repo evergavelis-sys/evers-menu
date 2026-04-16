@@ -307,43 +307,37 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .page { display: none; }
 .page.active { display: block; }
 
-/* ===== INTEGRATED COOK MODE ===== */
-.cook-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 300; display: flex; flex-direction: column; overflow: hidden; }
-.cook-overlay.hidden { display: none; }
-.cook-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); flex-shrink: 0; }
-.cook-title { font-size: 17px; font-weight: 700; color: var(--text); flex: 1; margin-right: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cook-close { background: var(--bg3); border: none; color: var(--text); font-size: 16px; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
-.cook-body { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; }
-.cook-timer-big { text-align: center; background: var(--bg2); border-radius: 18px; padding: 1.5rem 1.25rem; }
-.cook-timer-big .ctimer-display { font-size: 60px; font-weight: 800; color: var(--accent); letter-spacing: 3px; font-variant-numeric: tabular-nums; line-height: 1; }
-.cook-timer-big .ctimer-display.timer-done { color: var(--green) !important; animation: pulse 0.5s ease infinite alternate; }
-.cook-timer-big .ctimer-controls { display: flex; gap: 10px; justify-content: center; margin-top: 1rem; }
-.cook-timer-big .ctimer-btn { padding: 10px 26px; border-radius: 10px; border: 1px solid var(--line2); background: var(--bg4); color: var(--text); font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Jost', sans-serif; transition: background 0.15s; }
-.cook-timer-big .ctimer-btn.active { background: var(--accent); color: #000; border-color: transparent; }
-.cook-timer-big .ctimer-presets { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 0.75rem; }
-.cook-timer-big .ctimer-preset { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--line2); background: var(--bg4); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Jost', sans-serif; transition: all 0.15s; }
-.cook-timer-big .ctimer-preset.active, .cook-timer-big .ctimer-preset:hover { color: var(--accent); border-color: var(--accent); }
-.cook-section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); margin-bottom: 0.5rem; }
-.cook-ings { background: var(--bg2); border-radius: 14px; overflow: hidden; }
-.cook-ing-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); cursor: pointer; transition: opacity 0.15s; }
-.cook-ing-item:last-child { border-bottom: none; }
-.cook-ing-item.checked { opacity: 0.4; }
-.cook-ing-item.checked .cook-ing-name { text-decoration: line-through; }
-.cook-check-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--dim); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.cook-ing-item.checked .cook-check-circle { background: var(--accent); border-color: var(--accent); }
-.cook-ing-item.checked .cook-check-circle::after { content: ''; display: block; width: 5px; height: 9px; border-right: 2.5px solid #000; border-bottom: 2.5px solid #000; transform: rotate(45deg) translateY(-1px); }
-.cook-ing-name { font-size: 14px; color: var(--text); }
-.cook-steps { display: flex; flex-direction: column; gap: 10px; }
-.cook-step { display: flex; gap: 12px; background: var(--bg2); border-radius: 12px; padding: 14px; cursor: pointer; transition: opacity 0.15s; }
-.cook-step.done { opacity: 0.4; }
-.cook-step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #000; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.cook-step.done .cook-step-num { background: var(--bg4); color: var(--dim); }
-.cook-step-text { font-size: 14px; color: var(--text); line-height: 1.6; }
-.cook-step.done .cook-step-text { text-decoration: line-through; color: var(--dim); }
-.cook-log-btn { width: 100%; padding: 15px; background: var(--accent); color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; font-family: 'Jost', sans-serif; cursor: pointer; margin-bottom: 1.5rem; }
-.btn-start-cooking { width: 100%; padding: 14px; background: var(--bg3); color: var(--text); border: 1.5px solid var(--accent); border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 0.5rem; font-family: 'Jost', sans-serif; }
+/* ===== COOK MODE (FULL REWRITE) ===== */
+.cook-mode { position: fixed; inset: 0; background: linear-gradient(160deg,#052e16 0%,#14532d 55%,#166534 100%); z-index: 400; display: flex; flex-direction: column; color: #fff; font-family: 'Jost',sans-serif; }
+.cook-mode.hidden { display: none; }
+.cm-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem 0.4rem; flex-shrink: 0; }
+.cm-recipe-name { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.65); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 0.75rem; }
+.cm-header-btns { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+.cm-gesture-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 16px; cursor: pointer; font-family: 'Jost',sans-serif; letter-spacing: 0.3px; transition: all 0.2s; }
+.cm-gesture-btn.active { background: rgba(74,222,128,0.2); border-color: #4ade80; color: #4ade80; }
+.cm-close-btn { background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.7); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+.cm-dots-row { display: flex; gap: 5px; justify-content: center; padding: 0.25rem 1.5rem; flex-shrink: 0; flex-wrap: wrap; }
+.cm-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all 0.25s; flex-shrink: 0; }
+.cm-dot.active { background: #4ade80; transform: scale(1.35); }
+.cm-dot.done { background: rgba(74,222,128,0.45); }
+.cm-step-counter { text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); padding: 0.25rem 1.5rem 0; flex-shrink: 0; }
+.cm-step-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1.25rem 2.25rem; cursor: pointer; -webkit-user-select: none; user-select: none; min-height: 0; overflow: hidden; }
+.cm-step-text { font-size: clamp(20px, 4.5vw, 34px); font-weight: 600; line-height: 1.5; text-align: center; color: #fff; transition: transform 0.22s ease, opacity 0.22s ease; }
+.cm-timer-row { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.5rem 1.5rem; flex-shrink: 0; }
+.cm-timer-display { font-size: 46px; font-weight: 800; color: #4ade80; letter-spacing: 3px; font-variant-numeric: tabular-nums; line-height: 1; }
+.cm-timer-display.done { color: #fbbf24; animation: pulse 0.5s ease infinite alternate; }
+.cm-timer-btn { background: rgba(74,222,128,0.15); border: 1.5px solid rgba(74,222,128,0.6); color: #4ade80; padding: 9px 22px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Jost',sans-serif; transition: background 0.15s; }
+.cm-timer-btn.active { background: rgba(74,222,128,0.3); }
+.cm-nav-row { display: flex; align-items: center; justify-content: center; gap: 1.25rem; padding: 0.6rem 1.5rem 1.1rem; flex-shrink: 0; }
+.cm-nav-btn { width: 54px; height: 54px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.18); color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; }
+.cm-nav-btn:active { background: rgba(255,255,255,0.22); }
+.cm-done-btn { background: #4ade80; color: #052e16; border: none; padding: 14px 34px; border-radius: 50px; font-size: 17px; font-weight: 800; cursor: pointer; font-family: 'Jost',sans-serif; }
+.cm-gesture-hint { position: absolute; top: 44%; left: 50%; transform: translate(-50%,-50%); background: rgba(0,0,0,0.72); color: #4ade80; font-size: 17px; font-weight: 700; padding: 11px 22px; border-radius: 14px; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 10; white-space: nowrap; }
+.cm-camera-feed { position: absolute; bottom: 88px; right: 12px; width: 104px; height: 78px; border-radius: 10px; object-fit: cover; opacity: 0.75; transform: scaleX(-1); z-index: 5; display: none; }
+/* btn-start-cooking stays */
+.btn-start-cooking { width: 100%; padding: 14px; background: var(--bg3); color: var(--text); border: 1.5px solid var(--accent); border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 0.5rem; font-family: 'Jost',sans-serif; }
 /* AUTO-DEMO */
-.demo-fab { position: fixed; bottom: 88px; right: 16px; background: var(--bg3); border: 1px solid var(--line2); color: var(--muted); font-size: 11px; font-weight: 700; padding: 7px 13px; border-radius: 20px; cursor: pointer; z-index: 200; font-family: 'Jost', sans-serif; letter-spacing: 0.5px; transition: all 0.2s; }
+.demo-fab { position: fixed; bottom: 88px; right: 16px; background: var(--bg3); border: 1px solid var(--line2); color: var(--muted); font-size: 11px; font-weight: 700; padding: 7px 13px; border-radius: 20px; cursor: pointer; z-index: 200; font-family: 'Jost',sans-serif; letter-spacing: 0.5px; transition: all 0.2s; }
 .demo-fab.running { background: var(--accent); color: #000; border-color: transparent; }
 </style>
 </head>
@@ -494,39 +488,31 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
   </div>
 </div>
 
-<!-- COOK MODE OVERLAY -->
-<div class="cook-overlay hidden" id="cook-overlay">
-  <div class="cook-header">
-    <div class="cook-title" id="cook-mode-title">Cook Mode</div>
-    <button class="cook-close" onclick="closeCookMode()">&#10005;</button>
+<!-- COOK MODE (FULL REWRITE) -->
+<div class="cook-mode hidden" id="cook-mode">
+  <div class="cm-header">
+    <div class="cm-recipe-name" id="cm-recipe-name">Cook Mode</div>
+    <div class="cm-header-btns">
+      <button class="cm-gesture-btn" id="cm-gesture-btn" onclick="toggleGestureControl()">&#128247; Gestures</button>
+      <button class="cm-close-btn" onclick="closeCookMode()">&#10005;</button>
+    </div>
   </div>
-  <div class="cook-body">
-    <div class="cook-timer-big">
-      <div class="timer-label">Cook Timer</div>
-      <div class="ctimer-display" id="ctimer-display">00:00</div>
-      <div class="ctimer-controls">
-        <button class="ctimer-btn" id="ctimer-start" onclick="cookTimerToggle()">Start</button>
-        <button class="ctimer-btn" onclick="cookTimerReset()">Reset</button>
-      </div>
-      <div class="ctimer-presets">
-        <button class="ctimer-preset" onclick="cookTimerSet(5,this)">5m</button>
-        <button class="ctimer-preset" onclick="cookTimerSet(10,this)">10m</button>
-        <button class="ctimer-preset" onclick="cookTimerSet(15,this)">15m</button>
-        <button class="ctimer-preset" onclick="cookTimerSet(20,this)">20m</button>
-        <button class="ctimer-preset" onclick="cookTimerSet(30,this)">30m</button>
-        <button class="ctimer-preset" onclick="cookTimerSet(45,this)">45m</button>
-      </div>
-    </div>
-    <div>
-      <div class="cook-section-title">Ingredients</div>
-      <div class="cook-ings" id="cook-ings"></div>
-    </div>
-    <div>
-      <div class="cook-section-title">Steps</div>
-      <div class="cook-steps" id="cook-steps"></div>
-    </div>
-    <button class="cook-log-btn" id="cook-log-btn" onclick="cookModeLog()">Mark as Cooked Today</button>
+  <div class="cm-dots-row" id="cm-dots"></div>
+  <div class="cm-step-counter" id="cm-step-counter">Step 1 of 1</div>
+  <div class="cm-step-area" id="cm-step-area" onclick="cmTap(event)" ontouchstart="cmTouchStart(event)" ontouchend="cmTouchEnd(event)">
+    <div class="cm-step-text" id="cm-step-text"></div>
   </div>
+  <div class="cm-timer-row" id="cm-timer-row" style="display:none">
+    <div class="cm-timer-display" id="cm-timer-display">00:00</div>
+    <button class="cm-timer-btn" id="cm-timer-btn" onclick="toggleCookTimer()">Pause</button>
+  </div>
+  <div class="cm-nav-row">
+    <button class="cm-nav-btn" id="cm-prev-btn" onclick="cmPrev()">&#9664;</button>
+    <button class="cm-nav-btn" id="cm-next-btn" onclick="cmNext()">&#9654;</button>
+    <button class="cm-done-btn" id="cm-done-btn" onclick="cookModeDone()" style="display:none">&#127881; Done &amp; Log</button>
+  </div>
+  <div class="cm-gesture-hint" id="cm-gesture-hint"></div>
+  <video class="cm-camera-feed" id="cm-camera-feed" autoplay muted playsinline></video>
 </div>
 
 <!-- AUTO-DEMO FAB -->
@@ -725,7 +711,7 @@ function renderRecipes(filter='', catFilter='') {
       html += `<div class="recipe-row" onclick="showDetail('${r.id}')">
         <div class="row-tag" style="background:${col}"></div>
         <div class="row-content">
-          <div class="row-title">${r.name}
+          <div class="row-title">${r.name}</div>
           <div class="row-desc">${r.desc}</div>
           ${(()=>{ const ings=(r.ings||[]).map(i=>(i[1]||i[0]||"").toLowerCase()); const m=PANTRY_ITEMS.filter(p=>ings.some(i=>i.includes(p))); return m.length>=3?'<div class="can-make-badge">✓ can make</div>':""; })()}
           <div class="row-meta">
@@ -1406,115 +1392,253 @@ document.addEventListener('visibilitychange', () => {
 
 console.log("Ever's Menu — PWA ready, offline-capable, wake lock enabled");
 
-// ===== INTEGRATED COOK MODE =====
-let cookTimerInterval = null;
-let cookTimerSeconds = 0;
-let cookTimerRunning = false;
-let cookTimerCountdown = false;
-let cookTimerTarget = 0;
+// ===== COOK MODE (FULL REWRITE) =====
+let _cmRecipe = null;
+let _cmStep = 0;
+let _cmTimerInterval = null;
+let _cmTimerSecs = 0;
+let _cmTimerRunning = false;
+let _cmWakeLock = null;
+let _cmTouchX = null;
+let _cmTouchY = null;
+// Gesture
+let _gestureEnabled = false;
+let _gestureStream = null;
+let _gestureHands = null;
+let _gestureCam = null;
+let _palmXHist = [];
+let _lastGestureT = 0;
+
+function _parseMins(text) {
+  const hr = text.match(/(\d+)\s*(?:hour|hr)/i);
+  const mn = text.match(/(\d+)\s*(?:minute|min)/i);
+  return (hr ? parseInt(hr[1]) * 60 : 0) + (mn ? parseInt(mn[1]) : 0);
+}
 
 function openCookMode() {
   const r = recipes.find(x => x.id === currentRecipeId);
-  if (!r) return;
-  requestWakeLock();
-  document.getElementById('cook-mode-title').textContent = r.name;
-  cookTimerReset();
-  if (r.time) {
-    const tmHr = r.time.match(/(\d+)\s*(?:hr|hour)/i);
-    const tm = r.time.match(/(\d+)\s*min/i);
-    const hrs = tmHr ? parseInt(tmHr[1]) : 0;
-    const mins = tm ? parseInt(tm[1]) : 0;
-    const total = hrs * 60 + mins;
-    if (total > 0) cookTimerSet(total, null);
-  }
-  const ingsEl = document.getElementById('cook-ings');
-  ingsEl.innerHTML = (r.ings || []).map((ing, i) => {
-    const [amt, name] = Array.isArray(ing) ? ing : [ing, ''];
-    return `<div class="cook-ing-item" id="cing-${i}" onclick="this.classList.toggle('checked')">
-      <div class="cook-check-circle"></div>
-      <div class="cook-ing-name">${name ? `<b>${name}</b> ${amt}` : amt}</div>
-    </div>`;
-  }).join('');
-  const stepsEl = document.getElementById('cook-steps');
-  stepsEl.innerHTML = (r.steps || []).map((step, i) => `
-    <div class="cook-step" id="cstep-${i}" onclick="this.classList.toggle('done')">
-      <div class="cook-step-num">${i + 1}</div>
-      <div class="cook-step-text">${step}</div>
-    </div>`).join('');
-  const logBtn = document.getElementById('cook-log-btn');
-  if (logBtn) { logBtn.textContent = 'Mark as Cooked Today'; logBtn.style.background = ''; }
-  document.getElementById('cook-overlay').classList.remove('hidden');
+  if (!r || !r.steps || !r.steps.length) return;
+  _cmRecipe = r; _cmStep = 0;
+  document.getElementById('cm-recipe-name').textContent = r.name;
+  document.getElementById('cook-mode').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+  _cmRenderStep();
+  _cmAcquireWakeLock();
 }
 
 function closeCookMode() {
-  document.getElementById('cook-overlay').classList.add('hidden');
+  document.getElementById('cook-mode').classList.add('hidden');
   document.body.style.overflow = '';
-  cookTimerReset();
-  releaseWakeLock();
+  _cmStopTimer();
+  stopGestureControl();
+  if (_cmWakeLock) { _cmWakeLock.release().catch(()=>{}); _cmWakeLock = null; }
+  _cmRecipe = null;
 }
 
-function cookModeLog() {
-  logCurrentRecipe();
-  const btn = document.getElementById('cook-log-btn');
-  btn.textContent = 'Logged!';
-  btn.style.background = 'var(--green, #22c55e)';
-  setTimeout(() => { btn.textContent = 'Mark as Cooked Today'; btn.style.background = ''; }, 2000);
-}
-
-function cookTimerFmt(s) {
-  const m = Math.floor(Math.abs(s) / 60), sec = Math.abs(s) % 60;
-  return (s < 0 ? '-' : '') + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
-}
-function cookTimerTick() {
-  const disp = document.getElementById('ctimer-display');
-  const btn = document.getElementById('ctimer-start');
-  if (!disp) return;
-  if (cookTimerCountdown) {
-    cookTimerSeconds--;
-    if (cookTimerSeconds <= 0) {
-      cookTimerSeconds = 0;
-      clearInterval(cookTimerInterval); cookTimerRunning = false;
-      disp.textContent = 'Done!'; disp.classList.add('timer-done');
-      btn.textContent = 'Start'; btn.classList.remove('active');
-      if ('vibrate' in navigator) navigator.vibrate([300,100,300]);
-      return;
-    }
-  } else { cookTimerSeconds++; }
-  disp.textContent = cookTimerFmt(cookTimerSeconds);
-  disp.classList.remove('timer-done');
-}
-function cookTimerToggle() {
-  const btn = document.getElementById('ctimer-start');
-  const disp = document.getElementById('ctimer-display');
-  if (!btn || !disp) return;
-  if (cookTimerRunning) {
-    clearInterval(cookTimerInterval); cookTimerRunning = false;
-    btn.textContent = 'Resume'; btn.classList.remove('active');
+function _cmRenderStep() {
+  if (!_cmRecipe) return;
+  const steps = _cmRecipe.steps;
+  const step = steps[_cmStep];
+  document.getElementById('cm-step-counter').textContent = `Step ${_cmStep + 1} of ${steps.length}`;
+  document.getElementById('cm-step-text').textContent = step;
+  // dots
+  document.getElementById('cm-dots').innerHTML = steps.map((_,i) =>
+    `<div class="cm-dot${i===_cmStep?' active':i<_cmStep?' done':''}"></div>`).join('');
+  // nav buttons
+  const prevBtn = document.getElementById('cm-prev-btn');
+  const nextBtn = document.getElementById('cm-next-btn');
+  const doneBtn = document.getElementById('cm-done-btn');
+  prevBtn.style.opacity = _cmStep === 0 ? '0.3' : '1';
+  const isLast = _cmStep === steps.length - 1;
+  nextBtn.style.display = isLast ? 'none' : 'flex';
+  doneBtn.style.display = isLast ? 'flex' : 'none';
+  // timer: parse step text
+  _cmStopTimer();
+  const mins = _parseMins(step);
+  const timerRow = document.getElementById('cm-timer-row');
+  if (mins > 0) {
+    timerRow.style.display = 'flex';
+    _cmTimerSecs = mins * 60;
+    _cmTimerRunning = false;
+    _cmUpdateTimerDisplay();
+    const tb = document.getElementById('cm-timer-btn');
+    tb.textContent = 'Pause'; tb.classList.add('active');
+    _cmStartTimer();
   } else {
-    if (disp.textContent === 'Done!') { cookTimerReset(); return; }
-    cookTimerInterval = setInterval(cookTimerTick, 1000);
-    cookTimerRunning = true; btn.textContent = 'Pause'; btn.classList.add('active');
+    timerRow.style.display = 'none';
   }
 }
-function cookTimerReset() {
-  clearInterval(cookTimerInterval); cookTimerRunning = false;
-  cookTimerSeconds = cookTimerCountdown ? cookTimerTarget : 0;
-  cookTimerCountdown = false; cookTimerTarget = 0;
-  const disp = document.getElementById('ctimer-display');
-  const btn = document.getElementById('ctimer-start');
-  if (disp) { disp.textContent = '00:00'; disp.classList.remove('timer-done'); }
-  if (btn) { btn.textContent = 'Start'; btn.classList.remove('active'); }
+
+function _cmSlide(dir) {
+  const el = document.getElementById('cm-step-text');
+  el.style.transition = 'none';
+  el.style.transform = dir === 'next' ? 'translateX(50px)' : 'translateX(-50px)';
+  el.style.opacity = '0';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+    el.style.transform = 'translateX(0)'; el.style.opacity = '1';
+  }));
 }
-function cookTimerSet(minutes, el) {
-  clearInterval(cookTimerInterval); cookTimerRunning = false;
-  cookTimerCountdown = true; cookTimerTarget = minutes * 60; cookTimerSeconds = cookTimerTarget;
-  const disp = document.getElementById('ctimer-display');
-  const btn = document.getElementById('ctimer-start');
-  if (disp) { disp.textContent = cookTimerFmt(cookTimerSeconds); disp.classList.remove('timer-done'); }
-  if (btn) { btn.textContent = 'Start'; btn.classList.remove('active'); }
-  document.querySelectorAll('.ctimer-preset').forEach(p => p.classList.remove('active'));
-  if (el) el.classList.add('active');
+
+function cmNext() {
+  if (!_cmRecipe || _cmStep >= _cmRecipe.steps.length - 1) return;
+  _cmStep++; _cmSlide('next'); _cmRenderStep();
+}
+function cmPrev() {
+  if (_cmStep <= 0) return;
+  _cmStep--; _cmSlide('prev'); _cmRenderStep();
+}
+
+function cmTouchStart(e) { _cmTouchX = e.touches[0].clientX; _cmTouchY = e.touches[0].clientY; }
+function cmTouchEnd(e) {
+  if (_cmTouchX === null) return;
+  const dx = e.changedTouches[0].clientX - _cmTouchX;
+  const dy = e.changedTouches[0].clientY - _cmTouchY;
+  _cmTouchX = null;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 44) { dx < 0 ? cmNext() : cmPrev(); }
+}
+function cmTap(e) {
+  if (e.target.closest('button')) return;
+  const x = e.clientX;
+  if (!x) return;
+  x < window.innerWidth / 2 ? cmPrev() : cmNext();
+}
+
+// Timer
+function _cmStartTimer() {
+  if (_cmTimerRunning) return;
+  _cmTimerRunning = true;
+  _cmTimerInterval = setInterval(() => {
+    if (_cmTimerSecs <= 0) {
+      _cmStopTimer();
+      const d = document.getElementById('cm-timer-display');
+      if (d) { d.textContent = 'Done!'; d.classList.add('done'); }
+      if ('vibrate' in navigator) navigator.vibrate([400,100,400]);
+      return;
+    }
+    _cmTimerSecs--; _cmUpdateTimerDisplay();
+  }, 1000);
+}
+function _cmStopTimer() {
+  clearInterval(_cmTimerInterval); _cmTimerRunning = false;
+}
+function toggleCookTimer() {
+  const btn = document.getElementById('cm-timer-btn');
+  if (_cmTimerRunning) {
+    _cmStopTimer(); if (btn) { btn.textContent = 'Resume'; btn.classList.remove('active'); }
+  } else {
+    _cmStartTimer(); if (btn) { btn.textContent = 'Pause'; btn.classList.add('active'); }
+  }
+}
+function _cmUpdateTimerDisplay() {
+  const m = Math.floor(_cmTimerSecs / 60), s = _cmTimerSecs % 60;
+  const d = document.getElementById('cm-timer-display');
+  if (d) { d.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); d.classList.remove('done'); }
+}
+
+// Done & log
+function cookModeDone() {
+  logCurrentRecipe();
+  closeCookMode();
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#4ade80;color:#052e16;padding:12px 26px;border-radius:20px;font-weight:800;z-index:9999;font-family:Jost,sans-serif;font-size:15px;';
+  t.textContent = 'Logged!'; document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+// Wake lock
+async function _cmAcquireWakeLock() {
+  try { if ('wakeLock' in navigator) _cmWakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+}
+
+// MediaPipe gesture control
+async function toggleGestureControl() {
+  const btn = document.getElementById('cm-gesture-btn');
+  if (_gestureEnabled) {
+    stopGestureControl();
+    if (btn) { btn.textContent = '\u{1F4F7} Gestures'; btn.classList.remove('active'); }
+  } else {
+    if (btn) btn.textContent = 'Starting...';
+    await startGestureControl();
+    if (btn) {
+      if (_gestureEnabled) { btn.textContent = '\u270B On'; btn.classList.add('active'); }
+      else { btn.textContent = '\u{1F4F7} Gestures'; }
+    }
+  }
+}
+
+async function startGestureControl() {
+  try {
+    if (!window.Hands) {
+      await _loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js');
+      await _loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js');
+    }
+    _gestureStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:320, height:240 } });
+    const vid = document.getElementById('cm-camera-feed');
+    vid.srcObject = _gestureStream; vid.style.display = 'block';
+    await vid.play();
+    _gestureHands = new Hands({ locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}` });
+    _gestureHands.setOptions({ maxNumHands:1, modelComplexity:0, minDetectionConfidence:0.7, minTrackingConfidence:0.5 });
+    _gestureHands.onResults(_onHandResults);
+    _gestureCam = new Camera(vid, { onFrame: async () => { await _gestureHands.send({ image: vid }); }, width:320, height:240 });
+    _gestureCam.start();
+    _gestureEnabled = true;
+  } catch(e) { console.log('Gesture error:', e); _gestureEnabled = false; }
+}
+
+function stopGestureControl() {
+  if (_gestureCam) { _gestureCam.stop(); _gestureCam = null; }
+  if (_gestureHands) { _gestureHands.close(); _gestureHands = null; }
+  if (_gestureStream) { _gestureStream.getTracks().forEach(t => t.stop()); _gestureStream = null; }
+  const vid = document.getElementById('cm-camera-feed');
+  if (vid) { vid.srcObject = null; vid.style.display = 'none'; }
+  _gestureEnabled = false; _palmXHist = [];
+}
+
+function _onHandResults(res) {
+  if (!res.multiHandLandmarks || !res.multiHandLandmarks.length) { _palmXHist = []; return; }
+  const lm = res.multiHandLandmarks[0];
+  const now = Date.now();
+  if (now - _lastGestureT < 900) return;
+  // Open palm: 4 of 5 fingertips above their base knuckle
+  const tips = [4,8,12,16,20], bases = [2,5,9,13,17];
+  const openCount = tips.filter((t,i) => lm[t].y < lm[bases[i]].y - 0.04).length;
+  const wristX = lm[0].x;
+  _palmXHist.push({ x: wristX, t: now });
+  if (_palmXHist.length > 12) _palmXHist.shift();
+  // Swipe: wrist moves > 0.2 normalized in < 600ms
+  if (_palmXHist.length >= 5) {
+    const old = _palmXHist[0];
+    const dx = wristX - old.x;
+    if (Math.abs(dx) > 0.2 && now - old.t < 600) {
+      _lastGestureT = now; _palmXHist = [];
+      if (dx < 0) { cmNext(); _showGestureHint('Swipe \u2192 Next'); }
+      else { cmPrev(); _showGestureHint('Swipe \u2190 Prev'); }
+      return;
+    }
+  }
+  // Open palm = pause/resume timer
+  if (openCount >= 4) {
+    _lastGestureT = now;
+    toggleCookTimer();
+    _showGestureHint(_cmTimerRunning ? '\u270B Timer Paused' : '\u270B Timer Running');
+  }
+}
+
+function _showGestureHint(txt) {
+  const el = document.getElementById('cm-gesture-hint');
+  if (!el) return;
+  el.textContent = txt; el.style.opacity = '1';
+  clearTimeout(el._t); el._t = setTimeout(() => { el.style.opacity = '0'; }, 1600);
+}
+
+function _loadScript(src) {
+  return new Promise((res, rej) => {
+    if (document.querySelector(`script[src="${src}"]`)) { res(); return; }
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
 }
 
 // ===== AUTO-DEMO TIMER =====
@@ -1523,23 +1647,20 @@ let demoIdx = 0;
 function toggleAutoDemo() {
   if (demoInterval) { stopAutoDemo(); return; }
   const btn = document.getElementById('demo-btn');
-  if (btn) { btn.textContent = '&#9646;&#9646; Demo'; btn.classList.add('running'); }
-  demoIdx = 0;
-  runDemoStep();
-  demoInterval = setInterval(runDemoStep, 5000);
+  if (btn) { btn.textContent = '\u23F8 Demo'; btn.classList.add('running'); }
+  demoIdx = 0; runDemoStep();
+  demoInterval = setInterval(runDemoStep, 5500);
 }
 function runDemoStep() {
-  if (!recipes || recipes.length === 0) { stopAutoDemo(); return; }
-  const r = recipes[demoIdx % recipes.length];
+  if (!recipes || !recipes.length) { stopAutoDemo(); return; }
+  if (!document.getElementById('cook-mode').classList.contains('hidden')) closeCookMode();
+  showDetail(recipes[demoIdx % recipes.length].id);
   demoIdx++;
-  // Close cook overlay if open, then show next recipe
-  if (!document.getElementById('cook-overlay').classList.contains('hidden')) closeCookMode();
-  showDetail(r.id);
 }
 function stopAutoDemo() {
   clearInterval(demoInterval); demoInterval = null;
   const btn = document.getElementById('demo-btn');
-  if (btn) { btn.innerHTML = '&#9654; Demo'; btn.classList.remove('running'); }
+  if (btn) { btn.textContent = '\u25B6 Demo'; btn.classList.remove('running'); }
 }
 
 // Serving scaler
