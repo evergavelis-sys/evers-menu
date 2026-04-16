@@ -28,7 +28,7 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .topbar {
   position: sticky; top: 0; z-index: 100;
   background: var(--bg); border-bottom: 1px solid var(--line);
-  padding: 0 1.25rem; padding-top: env(safe-area-inset-top, 0px);
+  padding: 0 1rem; padding-top: env(safe-area-inset-top, 0px);
   display: flex; align-items: center; justify-content: space-between;
   height: calc(56px + env(safe-area-inset-top, 0px));
 }
@@ -42,19 +42,19 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .add-btn:active { background: var(--bg3); }
 
 .tabs {
-  display: flex; border-bottom: 1px solid var(--line); background: var(--bg);
-  padding: 0 1.25rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  display: flex; border-bottom: 1px solid var(--line2); background: var(--bg);
+  padding: 0 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
 .tabs::-webkit-scrollbar { display: none; }
 .tab {
-  flex: 1; padding: 12px 4px 10px; font-size: 12px; font-weight: 400; color: var(--muted);
+  flex: 1; padding: 12px 0 10px; font-size: 12px; font-weight: 400; color: var(--muted);
   cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
   background: none; border-top: none; border-left: none; border-right: none; text-align: center;
 }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 
-.main { padding: 0 1.25rem 6rem; }
-.section { margin-top: 1.75rem; }
+.main { padding: 0 1rem 6rem; }
+.section { margin-top: 28px; }
 .section-label {
   font-size: 10px; font-weight: 600; letter-spacing: 1.8px;
   text-transform: uppercase; color: var(--dim); margin-bottom: 0.875rem;
@@ -69,11 +69,11 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .recipe-row:first-child { border-radius: 12px 12px 0 0; }
 .recipe-row:last-child { border-radius: 0 0 12px 12px; }
 .recipe-row:only-child { border-radius: 12px; }
-.row-tag { width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0; }
+.row-tag { width: 4px; align-self: stretch; border-radius: 0; flex-shrink: 0; }
 .row-content { flex: 1; min-width: 0; }
 .row-title { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row-desc { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.row-meta { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; align-items: center; }
+.row-meta { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; align-items: center; }
 .meta-pill { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 20px; border: 1px solid var(--line2); color: #888888; }
 .macro-pill { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; color: var(--accent); border: 1px solid rgba(176,74,138,0.3); }
 .row-chevron { color: var(--dim); font-size: 16px; flex-shrink: 0; }
@@ -120,11 +120,8 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
   background: var(--bg3); border-radius: 12px; padding: 12px;
 }
 .macro-item { text-align: center; }
-.macro-val { font-size: 18px; font-weight: 700; color: var(--text); }
-.macro-val.cal { color: var(--accent); }
-.macro-val.prot { color: var(--green); }
-.macro-val.carb { color: var(--blue); }
-.macro-val.fat { color: var(--purple); }
+.macro-val { font-size: 18px; font-weight: 700; color: var(--accent); }
+.macro-val.cal, .macro-val.prot, .macro-val.carb, .macro-val.fat { color: var(--accent); }
 .macro-lbl { font-size: 9px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--dim); margin-top: 2px; }
 
 .ing-list { list-style: none; margin-bottom: 1.5rem; }
@@ -139,10 +136,10 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .step-item.done .step-text { color: var(--dim); text-decoration: line-through; }
 .step-text { font-size: 14px; color: var(--text); line-height: 1.6; padding-top: 3px; }
 .note-card { background: var(--bg3); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 14px; margin-top: 1.25rem; font-size: 13px; color: var(--muted); line-height: 1.6; }
-.close-sheet { position: absolute; top: 1rem; right: 1rem; width: 28px; height: 28px; background: var(--bg4); border: none; border-radius: 50%; color: var(--muted); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
+.close-sheet { position: sticky; top: 0.75rem; left: 1rem; float: left; width: 32px; height: 32px; background: var(--bg3); border: 1px solid var(--line2); border-radius: 50%; color: var(--text); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; margin: 0.75rem 0 -32px 1rem; }
 
 /* CATEGORY FILTER CHIPS */
-.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 1.25rem 0.75rem; overflow-x: auto; scrollbar-width: none; }
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 0 0.75rem; overflow-x: auto; scrollbar-width: none; }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-chip {
   padding: 6px 14px; border-radius: 20px; border: 1px solid var(--line2);
@@ -159,7 +156,7 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
   background: rgba(109,171,126,0.15); color: var(--green);
   border: 1px solid rgba(109,171,126,0.3); border-radius: 5px;
   padding: 1px 7px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
-  margin-top: 3px;
+  margin-top: 4px; margin-bottom: 0;
 }
 
 /* PROTEIN GOAL BAR */
@@ -172,12 +169,12 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .goal-bar-fill.full { background: var(--accent); }
 
 /* SORT TOGGLE */
-.sort-btn { 
-  float: right; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line2);
-  background: transparent; color: var(--muted); font-size: 11px; font-weight: 600;
-  cursor: pointer; font-family: 'Jost', sans-serif; transition: all 0.15s;
+.sort-btn {
+  padding: 6px 14px; border-radius: 20px; border: 1px solid var(--line2);
+  background: var(--bg2); color: var(--muted); font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: 'Jost', sans-serif; transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
 }
-.sort-btn.active { color: var(--accent); border-color: var(--accent); }
+.sort-btn.active { background: var(--accent); color: #000; border-color: transparent; }
 .btn-cook {
   width: 100%; padding: 13px; background: var(--accent); color: #000;
   border: none; border-radius: 12px; font-size: 15px; font-weight: 700;
@@ -185,13 +182,12 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 }
 /* COOK TIMER */
 .cook-timer {
-  background: var(--bg3); border-radius: 14px; padding: 1rem 1.25rem;
-  margin-top: 1rem; display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; flex-wrap: wrap;
+  background: var(--bg3); border-radius: 14px; padding: 0.875rem 1.25rem;
+  margin-top: 1rem; display: flex; align-items: center; gap: 1rem;
 }
 .timer-display {
   font-size: 32px; font-weight: 800; letter-spacing: 2px; color: var(--accent);
-  font-variant-numeric: tabular-nums; min-width: 90px;
+  font-variant-numeric: tabular-nums; flex: 1;
 }
 .timer-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; }
 .timer-controls { display: flex; gap: 8px; }
@@ -202,13 +198,6 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 }
 .timer-btn.active { background: var(--accent); color: #000; border-color: transparent; }
 .timer-btn:hover { background: var(--bg4); filter: brightness(1.2); }
-.timer-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 0.5rem; width: 100%; }
-.timer-preset {
-  padding: 5px 12px; border-radius: 6px; border: 1px solid var(--line2);
-  background: var(--bg4); color: var(--muted); font-size: 11px; font-weight: 600;
-  cursor: pointer; font-family: 'Jost', sans-serif; transition: all 0.15s;
-}
-.timer-preset:hover { color: var(--accent); border-color: var(--accent); }
 .timer-done { color: var(--green) !important; animation: pulse 0.5s ease infinite alternate; }
 @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
 
@@ -293,13 +282,13 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .btn-cancel { flex: 1; padding: 13px; background: var(--bg3); color: var(--muted); border: 1px solid var(--line2); border-radius: 12px; font-size: 15px; font-family: 'Jost', sans-serif; cursor: pointer; }
 
 .empty { text-align: center; padding: 3rem 1rem; color: var(--dim); font-size: 14px; }
-.search-wrap { padding: 1rem 0 0; }
+.search-wrap { padding: 1rem 0 0; margin: 0; }
 .search-input { width: 100%; background: var(--bg2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; font-size: 14px; color: var(--text); font-family: 'Jost', sans-serif; outline: none; -webkit-appearance: none; }
 .search-input::placeholder { color: var(--dim); }
 .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 1.25rem 0; }
-.stat-card { background: var(--bg2); border-radius: 12px; padding: 12px; text-align: center; }
+.stat-card { background: var(--bg2); border-radius: 10px; padding: 16px 12px; text-align: center; }
 .stat-num { font-size: 28px; font-weight: 800; color: var(--accent); }
-.stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 1px; }
+.stat-label { font-size: 10px; color: var(--dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 1px; }
 .intro-card { background: var(--bg2); border: 1px solid var(--line2); border-radius: 14px; padding: 1.25rem; margin: 1.25rem 0; display: flex; flex-direction: column; gap: 4px; }
 .intro-card h2 { font-size: 22px; font-weight: 700; color: var(--text); }
 .intro-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
@@ -316,20 +305,20 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .cm-gesture-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 16px; cursor: pointer; font-family: 'Jost',sans-serif; letter-spacing: 0.3px; transition: all 0.2s; }
 .cm-gesture-btn.active { background: rgba(74,222,128,0.2); border-color: #4ade80; color: #4ade80; }
 .cm-close-btn { background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.7); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; }
-.cm-dots-row { display: flex; gap: 5px; justify-content: center; padding: 0.25rem 1.5rem; flex-shrink: 0; flex-wrap: wrap; }
-.cm-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all 0.25s; flex-shrink: 0; }
-.cm-dot.active { background: #4ade80; transform: scale(1.35); }
+.cm-dots-row { display: flex; gap: 10px; justify-content: center; padding: 0.25rem 1.5rem; flex-shrink: 0; flex-wrap: wrap; }
+.cm-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all 0.25s; flex-shrink: 0; }
+.cm-dot.active { background: #4ade80; transform: scale(1.3); }
 .cm-dot.done { background: rgba(74,222,128,0.45); }
-.cm-step-counter { text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); padding: 0.25rem 1.5rem 0; flex-shrink: 0; }
+.cm-step-counter { text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 2px; font-variant: small-caps; color: rgba(255,255,255,0.75); padding: 0.25rem 1.5rem 0; flex-shrink: 0; }
 .cm-step-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1.25rem 2.25rem; cursor: pointer; -webkit-user-select: none; user-select: none; min-height: 0; overflow: hidden; }
 .cm-step-text { font-size: clamp(20px, 4.5vw, 34px); font-weight: 600; line-height: 1.5; text-align: center; color: #fff; transition: transform 0.22s ease, opacity 0.22s ease; }
 .cm-timer-row { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.5rem 1.5rem; flex-shrink: 0; }
 .cm-timer-display { font-size: 46px; font-weight: 800; color: #4ade80; letter-spacing: 3px; font-variant-numeric: tabular-nums; line-height: 1; }
 .cm-timer-display.done { color: #fbbf24; animation: pulse 0.5s ease infinite alternate; }
-.cm-timer-btn { background: rgba(74,222,128,0.15); border: 1.5px solid rgba(74,222,128,0.6); color: #4ade80; padding: 9px 22px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Jost',sans-serif; transition: background 0.15s; }
+.cm-timer-btn { background: rgba(74,222,128,0.15); border: 2px solid #4ade80; color: #4ade80; padding: 9px 22px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Jost',sans-serif; transition: background 0.15s; }
 .cm-timer-btn.active { background: rgba(74,222,128,0.3); }
-.cm-nav-row { display: flex; align-items: center; justify-content: center; gap: 1.25rem; padding: 0.6rem 1.5rem 1.1rem; flex-shrink: 0; }
-.cm-nav-btn { width: 54px; height: 54px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.18); color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; }
+.cm-nav-row { display: flex; align-items: center; justify-content: center; gap: 1.25rem; padding: 0.75rem 1.5rem 2.25rem; flex-shrink: 0; }
+.cm-nav-btn { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.18); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; }
 .cm-nav-btn:active { background: rgba(255,255,255,0.22); }
 .cm-done-btn { background: #4ade80; color: #052e16; border: none; padding: 14px 34px; border-radius: 50px; font-size: 17px; font-weight: 800; cursor: pointer; font-family: 'Jost',sans-serif; }
 .cm-gesture-hint { position: absolute; top: 44%; left: 50%; transform: translate(-50%,-50%); background: rgba(0,0,0,0.72); color: #4ade80; font-size: 17px; font-weight: 700; padding: 11px 22px; border-radius: 14px; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 10; white-space: nowrap; }
@@ -377,7 +366,7 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
       <button class="filter-chip" onclick="setFilter('sides',this)">Sides</button>
       <button class="filter-chip" onclick="setFilter('snack',this)">Snacks</button>
     
-      <button class="sort-btn" onclick="toggleSort(this)">⏱ Sort</button></div>
+      <button class="sort-btn" onclick="toggleSort(this)">Sort by time</button></div>
     
     <div class="stats-row">
       <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Recipes</div></div>
@@ -439,7 +428,7 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 <div class="detail-sheet" id="detail-sheet">
   <div class="sheet-handle"></div>
   <div class="detail-photo-wrap" id="d-photo-wrap"></div>
-  <button class="close-sheet" onclick="closeDetail()">×</button>
+  <button class="close-sheet" onclick="closeDetail()">&#8592;</button>
   <div class="sheet-header">
     <div class="sheet-tag-bar"><span class="sheet-tag" id="d-tag"></span></div>
     <div class="sheet-title" id="d-title"></div>
@@ -465,19 +454,9 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
         <div class="timer-label">Cook Timer</div>
         <div class="timer-display" id="timer-display">00:00</div>
       </div>
-      <div>
-        <div class="timer-controls">
-          <button class="timer-btn" id="timer-start-btn" onclick="timerToggle()">Start</button>
-          <button class="timer-btn" onclick="timerReset()">Reset</button>
-        </div>
-        <div class="timer-presets" id="timer-presets">
-          <button class="timer-preset" onclick="timerSet(5)">5m</button>
-          <button class="timer-preset" onclick="timerSet(10)">10m</button>
-          <button class="timer-preset" onclick="timerSet(15)">15m</button>
-          <button class="timer-preset" onclick="timerSet(20)">20m</button>
-          <button class="timer-preset" onclick="timerSet(30)">30m</button>
-          <button class="timer-preset" onclick="timerSet(45)">45m</button>
-        </div>
+      <div class="timer-controls">
+        <button class="timer-btn" id="timer-start-btn" onclick="timerToggle()">Start</button>
+        <button class="timer-btn" onclick="timerReset()">Reset</button>
       </div>
     </div>
     <button class="btn-cook" id="d-cook" onclick="logCurrentRecipe()">Mark as Cooked Today</button>
