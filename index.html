@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name"apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ever's Menu">
@@ -328,6 +328,27 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 /* AUTO-DEMO */
 .demo-fab { position: fixed; bottom: 88px; right: 16px; background: var(--bg3); border: 1px solid var(--line2); color: var(--muted); font-size: 11px; font-weight: 700; padding: 7px 13px; border-radius: 20px; cursor: pointer; z-index: 200; font-family: 'Jost',sans-serif; letter-spacing: 0.5px; transition: all 0.2s; }
 .demo-fab.running { background: var(--accent); color: #000; border-color: transparent; }
+
+/* PANTRY BUTTON */
+.pantry-btn {
+  width: 100%; padding: 10px 16px; background: var(--bg2);
+  border: 1px solid rgba(109,171,126,0.4); border-radius: 12px;
+  color: var(--green); font-size: 13px; font-weight: 600;
+  font-family: 'Jost', sans-serif; cursor: pointer; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: background 0.15s;
+}
+.pantry-btn:active { background: var(--bg3); }
+.pantry-chip-item {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(109,171,126,0.15); color: var(--green);
+  border: 1px solid rgba(109,171,126,0.3); border-radius: 20px;
+  padding: 4px 10px; font-size: 12px; font-weight: 500;
+}
+.pantry-chip-item button {
+  background: none; border: none; color: var(--green); cursor: pointer;
+  font-size: 14px; padding: 0; line-height: 1; margin-left: 2px;
+}
 </style>
 </head>
 <body>
@@ -366,6 +387,7 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
       <button class="filter-chip" onclick="setFilter('sides',this)">Sides</button>
       <button class="filter-chip" onclick="setFilter('snack',this)">Snacks</button>
     
+      <button class="filter-chip" id="can-make-filter" onclick="toggleCanMakeFilter(this)">🥫 Can Make</button>
       <button class="sort-btn" onclick="toggleSort(this)">Sort by time</button></div>
     
     <div class="stats-row">
@@ -373,11 +395,13 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
       <div class="stat-card"><div class="stat-num" id="stat-cats">0</div><div class="stat-label">Categories</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-custom">0</div><div class="stat-label">Your Adds</div></div>
     </div>
+    <button class="pantry-btn" id="pantry-open-btn" onclick="openPantry()">🥫 My Pantry <span id="pantry-count"></span></button>
     <div id="recipe-sections"></div>
   </div>
 
   <!-- LOG -->
   <div class="page" id="page-log">
+    <div id="macro-week-summary" style="padding:1rem 1rem 0"></div>
     <div id="log-content"></div>
   </div>
 
@@ -498,6 +522,24 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 <button class="demo-fab" id="demo-btn" onclick="toggleAutoDemo()">&#9654; Demo</button>
 
 <!-- ADD MODAL -->
+<!-- PANTRY MODAL -->
+<div class="modal-overlay" id="pantry-overlay" onclick="if(event.target===this)closePantry()">
+  <div class="modal" id="pantry-modal">
+    <h2>🥫 My Pantry</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;">Items you have at home. Used to show "can make" badges.</p>
+    <div class="field">
+      <label>ADD ITEM</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="pantry-input" placeholder="e.g. eggs, pasta..." style="flex:1;background:var(--bg3);border:1px solid var(--line2);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text);font-family:'Jost',sans-serif;outline:none">
+        <button onclick="addPantryItem()" style="padding:10px 16px;background:var(--accent);color:#000;border:none;border-radius:10px;font-weight:700;font-family:'Jost',sans-serif;cursor:pointer">+</button>
+      </div>
+    </div>
+    <div id="pantry-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.5rem;min-height:40px"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closePantry()">Done</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <h2 id="modal-title-text">Add Recipe</h2>
@@ -653,7 +695,7 @@ const SHOP_DATA = {
   'Pantry & Flavor': ['Black truffle olive oil','Aged balsamic vinegar','Miso paste','Sesame oil','Oyster sauce','Dijon mustard','Hot sauce','Cumin','Red pepper flakes','Chili powder','Everything bagel seasoning','Rice vinegar','Flaky salt','Smoked paprika'],
   'Already Have ✓': ['Chicken thighs','Kale & spinach','Rice','Olive oil','Soy sauce','Honey','Garlic cubes']
 };
-const PANTRY_ITEMS = ['chicken', 'kale', 'spinach', 'rice', 'olive oil', 'soy sauce', 'honey', 'garlic'];
+let pantryItems = JSON.parse(localStorage.getItem('ever_pantry') || JSON.stringify(['chicken', 'kale', 'spinach', 'rice', 'olive oil', 'soy sauce', 'honey', 'garlic']))
 
 
 // STATE
@@ -675,7 +717,7 @@ function save() {
 // ---- RECIPES ----
 function renderRecipes(filter='', catFilter='') {
   const cats = {};
-  const filtered = recipes.filter(r => { if(catFilter && r.cat !== catFilter) return false; return !filter || r.name.toLowerCase().includes(filter.toLowerCase()) || r.desc.toLowerCase().includes(filter.toLowerCase()) || r.cat.toLowerCase().includes(filter.toLowerCase()); });
+  const filtered = recipes.filter(r => { if(catFilter && r.cat !== catFilter) return false;  if(canMakeFilterActive){const m=pantryItems.filter(p=>(r.ings||[]).some(i=>typeof i==='string'?i.toLowerCase().includes(p):i.name&&i.name.toLowerCase().includes(p)));if(m.length<2)return false;}return !filter || r.name.toLowerCase().includes(filter.toLowerCase()) || r.desc.toLowerCase().includes(filter.toLowerCase()) || r.cat.toLowerCase().includes(filter.toLowerCase()); });
   if (typeof sortByTime !== 'undefined' && sortByTime) { filtered.sort((a,b) => { const ta = parseInt(a.time)||999; const tb = parseInt(b.time)||999; return ta-tb; }); }
   filtered.forEach(r => { if(!cats[r.cat]) cats[r.cat] = []; cats[r.cat].push(r); });
   const catLabels = {bowl:'Bowls',salad:'Salads',breakfast:'Breakfast',pasta:'Pasta',sides:'Sides',snack:'Snacks & Quick',idea:'Ideas'};
@@ -692,7 +734,7 @@ function renderRecipes(filter='', catFilter='') {
         <div class="row-content">
           <div class="row-title">${r.name}</div>
           <div class="row-desc">${r.desc}</div>
-          ${(()=>{ const ings=(r.ings||[]).map(i=>(i[1]||i[0]||"").toLowerCase()); const m=PANTRY_ITEMS.filter(p=>ings.some(i=>i.includes(p))); return m.length>=3?'<div class="can-make-badge">✓ can make</div>':""; })()}
+          ${(()=>{ const ings=(r.ings||[]).map(i=>(i[1]||i[0]||"").toLowerCase()); const m=pantryItems.filter(p=>ings.some(i=>i.includes(p))); return (ings.length>0&&m.length>=2)?'<div class="can-make-badge">✓ ' + m.length + '/' + pantryItems.length + ' items</div>':""; })()}
           <div class="row-meta">
             ${r.time?`<span class="meta-pill">${r.time}</span>`:''}
             ${m?`<span class="macro-pill">${m.cal} kcal</span><span class="meta-pill" style="color:var(--green);border-color:rgba(109,171,126,0.3)">${m.prot}g protein</span>`:''}
@@ -795,7 +837,8 @@ function logCurrentRecipe() {
 }
 
 function renderLog() {
-  const el = document.getElementById('log-content');
+
+  _updateMacroWeekSummary();  const el = document.getElementById('log-content');
   if(!cookLog.length) {
     el.innerHTML = `<div class="log-empty">No meals logged yet.<br>Open a recipe and tap "Mark as Cooked Today".</div>`;
     return;
@@ -916,7 +959,9 @@ When asked for a recipe, respond with a JSON object in this exact format (no mar
 For general cooking questions or conversation (not a recipe request), respond with:
 {"type":"chat","message":"your response here"}
 
-Always be concise, practical, and match Ever's vibe — real food, no fluff.`;
+Always be concise, practical, and match Ever's vibe — real food, no fluff.
+
+Ever's current pantry items: ${pantryItems.join(', ') || 'none specified'}. When suggesting recipes, prioritize these ingredients.`;
 
     const response = await fetch('https://restless-dew-2cf5.ever-gavelis.workers.dev', {
       method: 'POST',
@@ -1171,6 +1216,7 @@ renderRecipes();
 renderShop();
 renderIdeas();
 renderLog();
+updatePantryCount();
 </script>
 
 <script>
@@ -1699,6 +1745,100 @@ function addRecipeToShop() {
     btn.style.background = '#22c55e'; btn.style.color = '#000';
     setTimeout(() => { btn.textContent = '+ Add to Shopping List'; btn.style.background=''; btn.style.color=''; }, 2000);
   }
+}
+
+
+// PANTRY MANAGEMENT
+function openPantry() {
+  document.getElementById('pantry-overlay').classList.add('open');
+  renderPantryChips();
+}
+
+function closePantry() {
+  document.getElementById('pantry-overlay').classList.remove('open');
+  renderRecipes();
+  updatePantryCount();
+}
+
+function renderPantryChips() {
+  const container = document.getElementById('pantry-chips');
+  container.innerHTML = pantryItems.map((item, i) =>
+    '<div class="pantry-chip-item">' + item + 
+    '<button onclick="removePantryItem(' + i + ')">×</button></div>'
+  ).join('');
+}
+
+function addPantryItem() {
+  const input = document.getElementById('pantry-input');
+  const val = input.value.trim().toLowerCase();
+  if (!val) return;
+  if (!pantryItems.includes(val)) {
+    pantryItems.push(val);
+    localStorage.setItem('ever_pantry', JSON.stringify(pantryItems));
+  }
+  input.value = '';
+  renderPantryChips();
+  updatePantryCount();
+}
+
+function removePantryItem(idx) {
+  pantryItems.splice(idx, 1);
+  localStorage.setItem('ever_pantry', JSON.stringify(pantryItems));
+  renderPantryChips();
+  updatePantryCount();
+}
+
+function updatePantryCount() {
+  const el = document.getElementById('pantry-count');
+  if (el) el.textContent = pantryItems.length + ' items';
+}
+
+// Init pantry count on load
+document.addEventListener('DOMContentLoaded', function() {
+  updatePantryCount();
+  const pi = document.getElementById('pantry-input');
+  if (pi) pi.addEventListener('keydown', function(e) { if(e.key==='Enter') addPantryItem(); });
+});
+
+
+// MACRO WEEKLY SUMMARY
+function _updateMacroWeekSummary() {
+  const el = document.getElementById('macro-week-summary');
+  if (!el || !cookLog.length) { if(el) el.innerHTML=''; return; }
+  
+  // Get last 7 days
+  const now = Date.now();
+  const week = 7 * 24 * 60 * 60 * 1000;
+  const recent = cookLog.filter(e => now - new Date(e.date).getTime() < week);
+  
+  if (!recent.length) { el.innerHTML = ''; return; }
+  
+  const totals = recent.reduce((acc, e) => {
+    const m = e.macros || {};
+    acc.cal += Number(m.cal) || 0;
+    acc.prot += Number(m.prot) || 0;
+    acc.carb += Number(m.carb) || 0;
+    acc.fat += Number(m.fat) || 0;
+    return acc;
+  }, {cal:0, prot:0, carb:0, fat:0});
+  
+  const days = recent.length;
+  el.innerHTML = '<div class="macro-bar" style="margin-bottom:0.5rem">' +
+    '<div class="macro-item"><div class="macro-val">' + Math.round(totals.cal/days) + '</div><div class="macro-lbl">Cal/day</div></div>' +
+    '<div class="macro-item"><div class="macro-val">' + Math.round(totals.prot/days) + 'g</div><div class="macro-lbl">Protein</div></div>' +
+    '<div class="macro-item"><div class="macro-val">' + Math.round(totals.carb/days) + 'g</div><div class="macro-lbl">Carbs</div></div>' +
+    '<div class="macro-item"><div class="macro-val">' + Math.round(totals.fat/days) + 'g</div><div class="macro-lbl">Fat</div></div>' +
+    '</div>' +
+    '<p style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:0.75rem">7-day avg · ' + recent.length + ' meals logged</p>';
+}
+
+
+// CAN MAKE FILTER
+let canMakeFilterActive = false;
+function toggleCanMakeFilter(btn) {
+  canMakeFilterActive = !canMakeFilterActive;
+  btn.classList.toggle('active', canMakeFilterActive);
+  renderRecipes();
 }
 </script>
 </body>
