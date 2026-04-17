@@ -370,8 +370,14 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 @keyframes timerFlash { 0%,100%{color:var(--accent)} 50%{color:var(--text)} }
 .stage-timer-label { font-size:11px; color:var(--accent2); letter-spacing:.1em; }
 .stage-timer-btns { display:flex; gap:10px; }
-.stage-timer-btn { background:var(--bg4); border:1px solid var(--bg4); color:var(--text); border-radius:20px; padding:7px 18px; font-size:13px; cursor:pointer; }
+.stage-timer-btn { background:var(--bg4); border:1px solid var(--bg4); color:var(--text); border-radius:20px; padding:7px 18px; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s, border-color .15s, color .15s; }
 .stage-timer-btn:hover { border-color:var(--accent); }
+.stage-timer-btn.play { background:rgba(109,171,126,0.12); border-color:var(--green); color:var(--green); }
+.stage-timer-btn.play:hover { background:rgba(109,171,126,0.22); border-color:var(--green); }
+.stage-timer-btn.pause { background:rgba(196,112,90,0.14); border-color:var(--red); color:var(--red); }
+.stage-timer-btn.pause:hover { background:rgba(196,112,90,0.24); border-color:var(--red); }
+.stage-timer-btn.clear-btn { background:rgba(196,112,90,0.06); border-color:rgba(196,112,90,0.4); color:var(--red); }
+.stage-timer-btn.clear-btn:hover { background:rgba(196,112,90,0.14); border-color:var(--red); }
 .stage-nav { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 32px; flex-shrink:0; gap:12px; }
 .stage-nav-btn { background:var(--bg4); border:none; color:var(--text); border-radius:50px; padding:14px 28px; font-size:15px; font-weight:600; cursor:pointer; transition:background .15s; flex:1; }
 .stage-nav-btn:hover { background:var(--bg3); }
@@ -622,8 +628,8 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
       <div class="stage-timer-label">TIMER</div>
       <div class="stage-timer-display" id="cm-timer-display" onclick="toggleCookTimer()">00:00</div>
       <div class="stage-timer-btns">
-        <button class="stage-timer-btn" onclick="_cmStopTimer();_cmStep=_cmStep;_cmRenderStep()">&#10006; Clear</button>
-        <button class="stage-timer-btn" onclick="toggleCookTimer()">&#9654;/&#9646;&#9646;</button>
+        <button class="stage-timer-btn clear-btn" onclick="_cmClearTimer()">&#10006; Clear</button>
+        <button class="stage-timer-btn play" id="cm-play-btn" onclick="toggleCookTimer()">&#9654; Start</button>
       </div>
     </div>
     <!-- Nav buttons -->
@@ -1631,7 +1637,7 @@ function toggleSort(btn) {
 // ===== SERVICE WORKER (Offline Mode) =====
 if ('serviceWorker' in navigator) {
   const swCode = `
-const CACHE = 'evers-menu-v4';
+const CACHE = 'evers-menu-v6';
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
   self.skipWaiting();
@@ -1687,7 +1693,6 @@ console.log("Ever's Menu — PWA ready, offline-capable, wake lock enabled");
 let _cmRecipe = null;
 let _cmStep = 0;
 let _cmTimerInterval = null;
-let _cmTimerSecs = 0;
 let _cmTimerRunning = false;
 let _cmWakeLock = null;
 let _cmTouchX = null;
@@ -1707,6 +1712,8 @@ function _parseMins(text) {
 }
 
 function openCookMode(recipe) {
+  if (!recipe) recipe = recipes.find(r => r.id === currentRecipeId);
+  if (!recipe) return;
   _cmRecipe = recipe;
   _cmStep = 0;
   _cmTimerRunning = false;
@@ -1828,36 +1835,58 @@ function cmTap(e) {
   x < window.innerWidth / 2 ? cmPrev() : cmNext();
 }
 
-// Timer
+// Timer — single source of truth is _cmTimerVal (seconds remaining).
 function _cmStartTimer() {
   if (_cmTimerRunning) return;
+  if (_cmTimerVal <= 0) return;
   _cmTimerRunning = true;
+  const disp = document.getElementById('cm-timer-display');
+  if (disp) { disp.classList.remove('done-flash'); disp.classList.add('running'); }
   _cmTimerInterval = setInterval(() => {
-    if (_cmTimerSecs <= 0) {
+    if (_cmTimerVal <= 0) {
       _cmStopTimer();
       const d = document.getElementById('cm-timer-display');
-      if (d) { d.textContent = 'Done!'; d.classList.add('done'); }
+      if (d) { d.textContent = 'Done!'; d.classList.remove('running'); d.classList.add('done-flash'); }
       if ('vibrate' in navigator) navigator.vibrate([400,100,400]);
+      _setPlayBtn('resume');
       return;
     }
-    _cmTimerSecs--; _cmUpdateTimerDisplay();
+    _cmTimerVal--; _cmUpdateTimerDisplay();
   }, 1000);
 }
 function _cmStopTimer() {
   clearInterval(_cmTimerInterval); _cmTimerRunning = false;
+  const disp = document.getElementById('cm-timer-display');
+  if (disp) disp.classList.remove('running');
+}
+function _cmClearTimer() {
+  _cmStopTimer();
+  _cmTimerVal = 0;
+  const disp = document.getElementById('cm-timer-display');
+  if (disp) disp.classList.remove('done-flash','running');
+  _setPlayBtn('start');
+  _cmRenderStep();
+}
+function _setPlayBtn(state) {
+  const btn = document.getElementById('cm-play-btn');
+  if (!btn) return;
+  btn.classList.remove('play','pause');
+  if (state === 'pause') { btn.textContent = '\u23F8 Pause'; btn.classList.add('pause'); }
+  else if (state === 'resume') { btn.textContent = '\u25B6 Resume'; btn.classList.add('play'); }
+  else { btn.textContent = '\u25B6 Start'; btn.classList.add('play'); }
 }
 function toggleCookTimer() {
-  const btn = document.getElementById('cm-timer-btn');
   if (_cmTimerRunning) {
-    _cmStopTimer(); if (btn) { btn.textContent = 'Resume'; btn.classList.remove('active'); }
+    _cmStopTimer();
+    _setPlayBtn('resume');
   } else {
-    _cmStartTimer(); if (btn) { btn.textContent = 'Pause'; btn.classList.add('active'); }
+    _cmStartTimer();
+    if (_cmTimerRunning) _setPlayBtn('pause');
   }
 }
 function _cmUpdateTimerDisplay() {
-  const m = Math.floor(_cmTimerSecs / 60), s = _cmTimerSecs % 60;
   const d = document.getElementById('cm-timer-display');
-  if (d) { d.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); d.classList.remove('done'); }
+  if (d) { d.textContent = timerFormat(_cmTimerVal); d.classList.remove('done'); }
 }
 
 // Done & log
