@@ -1631,7 +1631,7 @@ function toggleSort(btn) {
 // ===== SERVICE WORKER (Offline Mode) =====
 if ('serviceWorker' in navigator) {
   const swCode = `
-const CACHE = 'evers-menu-v1';
+const CACHE = 'evers-menu-v4';
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
   self.skipWaiting();
