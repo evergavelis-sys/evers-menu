@@ -941,7 +941,7 @@ function save() {
 function renderRecipes(filter='', catFilter='') {
   const cats = {};
   const filtered = recipes.filter(r => { if(catFilter && r.cat !== catFilter) return false;  if(canMakeFilterActive){ const score = _getCanMakeScore(r); if(score.matched < 2) return false; } if(filter){ const q=filter.toLowerCase(); if(!r.name.toLowerCase().includes(q) && !r.cat.toLowerCase().includes(q)) return false; } if(catFilter && cats[catFilter]===undefined) cats[catFilter]=0; if(!catFilter) { cats[r.cat]=(cats[r.cat]||0)+1; } return true; });
-  if(sortBy==='time') filtered.sort((a,b)=>(a.time||99)-(b.time||99));
+  if(sortByTime) filtered.sort((a,b)=>(a.time||99)-(b.time||99));
   
   const sec = document.getElementById('recipe-sections');
   if(!sec) return;
@@ -982,7 +982,7 @@ function _recipeCard(r) {
   const timeStr = r.time ? r.time + ' min' : '';
   const cal = r.macros?.calories ? r.macros.calories + ' cal' : '';
   const photoHTML = r.photo ? '<img src="' + r.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" loading="lazy" />' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;">\u{1F373}</div>';
-  return '<div class="recipe-thumb" onclick="showDetail(' + r.id + ')">' +
+  return '<div class="recipe-thumb" onclick=\'showDetail(' + JSON.stringify(r.id) + ')\'>' +
     '<div style="width:80px;height:80px;border-radius:12px;overflow:hidden;background:var(--bg3);flex-shrink:0;">' + photoHTML + '</div>' +
     '<div class="recipe-info">' +
     '<div class="recipe-name">' + r.name + '</div>' +
@@ -1460,6 +1460,11 @@ function saveTitle() {
   document.querySelector('div[style*="position:fixed;inset:0;z-index:500"]')?.remove();
 }
 
+// Declared here (not at their feature blocks below) so renderRecipes() at INIT
+// doesn't hit the TDZ on these `let`s.
+let canMakeFilterActive = false;
+let sortByTime = false;
+
 // ---- INIT ----
 renderRecipes();
 renderShop();
@@ -1467,10 +1472,6 @@ renderIdeas();
 renderLog();
 updatePantryCount();
   checkOnboarding();
-</script>
-
-<script>
-
 
 // ===== CATEGORY FILTER =====
 let activeFilter = 'all';
@@ -1604,7 +1605,6 @@ function editCurrentRecipe() {
 
 
 // ===== SORT =====
-let sortByTime = false;
 function toggleSort(btn) {
   sortByTime = !sortByTime;
   btn.classList.toggle('active', sortByTime);
@@ -2123,7 +2123,6 @@ function _updateMacroWeekSummary() {
 
 
 // CAN MAKE FILTER
-let canMakeFilterActive = false;
 function toggleCanMakeFilter(btn) {
   canMakeFilterActive = !canMakeFilterActive;
   btn.classList.toggle('active', canMakeFilterActive);
