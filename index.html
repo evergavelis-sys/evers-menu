@@ -2201,7 +2201,6 @@ function discardImport() {
 function saveImportedRecipe() {
   if (!_importPendingRecipe) return;
   const r = _importPendingRecipe;
-  const d = load();
   const newRecipe = {
     id: Date.now(),
     name: r.name,
@@ -2215,8 +2214,8 @@ function saveImportedRecipe() {
     userAdded: true,
     imported: true,
   };
-  d.recipes.push(newRecipe);
-  save(d);
+  recipes.push(newRecipe);
+  save();
   renderRecipes();
   closeImport();
   document.getElementById('import-status').textContent = '';
@@ -2227,8 +2226,7 @@ function saveImportedRecipe() {
 // FEATURE: ONBOARDING
 // ============================================================
 function checkOnboarding() {
-  const d = load();
-  if (!d.recipes || d.recipes.length === 0) {
+  if (!recipes || recipes.length === 0) {
     const seen = localStorage.getItem('ever_onboarded');
     if (!seen) {
       document.getElementById('onboard-overlay').classList.remove('hidden');
@@ -2243,7 +2241,6 @@ function closeOnboarding() {
   localStorage.setItem('ever_onboarded', '1');
 }
 function loadStarterRecipes() {
-  const d = load();
   const starters = [
     {id:Date.now()+1,name:"Avocado Toast",category:"Breakfast",time:10,servings:1,macros:{calories:320,protein:9,carbs:30,fat:19},ingredients:["2 slices sourdough bread","1 ripe avocado","1 lemon, juiced","red pepper flakes","sea salt","2 eggs (optional)"],steps:["Toast the bread until golden and crispy.","Halve the avocado, remove the pit, and scoop flesh into a bowl.","Mash avocado with lemon juice, salt, and red pepper flakes.","Spread avocado mash generously on toast.","Top with fried or poached eggs if using. Serve immediately."],photo:"",userAdded:false,imported:false},
     {id:Date.now()+2,name:"Chicken Rice Bowl",category:"Bowls",time:25,servings:2,macros:{calories:520,protein:38,carbs:52,fat:12},ingredients:["2 chicken breasts","1 cup white rice","1 cup broccoli florets","2 tbsp soy sauce","1 tbsp olive oil","1 tsp garlic powder","sesame seeds"],steps:["Cook rice according to package instructions.","Season chicken with garlic powder, salt, and pepper.","Heat olive oil in a pan over medium-high heat.","Cook chicken 6-7 minutes per side until cooked through. Slice.","Steam broccoli for 4 minutes until tender-crisp.","Drizzle soy sauce over assembled bowls. Top with sesame seeds."],photo:"",userAdded:false,imported:false},
@@ -2252,8 +2249,8 @@ function loadStarterRecipes() {
     {id:Date.now()+5,name:"Overnight Oats",category:"Breakfast",time:5,servings:1,macros:{calories:380,protein:15,carbs:55,fat:9},ingredients:["1/2 cup rolled oats","1/2 cup milk or oat milk","1/4 cup Greek yogurt","1 tbsp chia seeds","1 tbsp honey or maple syrup","1/2 cup berries","1/4 tsp vanilla extract"],steps:["Combine oats, milk, yogurt, chia seeds, sweetener, and vanilla in a jar.","Stir well to combine.","Cover and refrigerate overnight (or at least 4 hours).","In the morning, stir and add more milk if too thick.","Top with fresh berries and serve cold."],photo:"",userAdded:false,imported:false},
     {id:Date.now()+6,name:"Tuna Salad Wrap",category:"Sides",time:10,servings:1,macros:{calories:380,protein:32,carbs:28,fat:14},ingredients:["1 can tuna, drained","2 tbsp mayo or Greek yogurt","1 stalk celery, diced","1 tbsp lemon juice","1 large flour tortilla","lettuce leaves","sliced tomato","salt and pepper"],steps:["Mix tuna, mayo, celery, lemon juice, salt, and pepper in a bowl.","Lay tortilla flat and add lettuce and tomato slices.","Spoon tuna mixture over the top.","Roll up tightly, cut in half diagonally, and serve."],photo:"",userAdded:false,imported:false},
   ];
-  starters.forEach(r => { if (!d.recipes.find(x => x.name === r.name)) d.recipes.push(r); });
-  save(d);
+  starters.forEach(r => { if (!recipes.find(x => x.name === r.name)) recipes.push(r); });
+  save();
   renderRecipes();
   closeOnboarding();
 }
@@ -2289,7 +2286,7 @@ async function doSync() {
   const statusEl = document.getElementById('sync-status');
   const workerUrl = 'https://restless-dew-2cf5.ever-gavelis.workers.dev';
   const myCode = _syncCode;
-  const d = load();
+  const d = {recipes: [...recipes], log: typeof cookLog !== 'undefined' ? [...cookLog] : []};
   statusEl.textContent = '\u23F3 Syncing...';
   try {
     // Push our data with our code
@@ -2315,14 +2312,15 @@ async function doSync() {
         (remote.recipes||[]).forEach(rr => {
           if (!merged.find(lr => lr.name === rr.name)) merged.push(rr);
         });
-        d.recipes = merged;
+        recipes.length = 0; merged.forEach(r => recipes.push(r));
         // Merge logs
         const localLogs = d.log || [];
         const remoteLogs = remote.log || [];
         const allLogs = [...localLogs, ...remoteLogs];
         const seenLogs = new Set();
-        d.log = allLogs.filter(l => { const k = l.id||l.date; if (seenLogs.has(k)) return false; seenLogs.add(k); return true; });
-        save(d);
+        const mergedLogs = allLogs.filter(l => { const k = l.id||l.date; if (seenLogs.has(k)) return false; seenLogs.add(k); return true; });
+        if (typeof cookLog !== 'undefined') { cookLog.length = 0; mergedLogs.forEach(l => cookLog.push(l)); }
+        save();
         renderRecipes();
         statusEl.textContent = '\u2705 Synced! ' + merged.length + ' recipes merged.';
       } else {
