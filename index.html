@@ -779,6 +779,22 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 </div>
 
 <script>
+// Dev reset: visit ?reset to wipe localStorage, unregister the Service Worker,
+// purge its caches, and re-seed defaults. The SW purge matters — without it,
+// the SW serves stale cached HTML on every navigation.
+if (location.search.includes('reset')) {
+  localStorage.clear();
+  const done = () => location.replace(location.pathname);
+  const purgeCaches = () => ('caches' in window)
+    ? caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k))))
+    : Promise.resolve();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then(regs => Promise.all(regs.map(r => r.unregister())))
+      .then(purgeCaches).then(done).catch(done);
+  } else { purgeCaches().then(done).catch(done); }
+}
+
 const TAG_COLORS = {
   bowl:'#b04a8a', breakfast:'#6dab7e', pasta:'#c4705a', sides:'#6a9fc0',
   snack:'#a87ab8', salad:'#7aab6d', idea:'#7a7672'
