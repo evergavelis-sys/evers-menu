@@ -49,6 +49,23 @@ Fine for reading this file or viewing code. NOT a usable way to run the app — 
 
 ---
 
+## Known gotcha: origin-scoped localStorage
+
+Browsers scope `localStorage` per **origin** = `scheme + host + port`. These are all separate storage buckets, even though they hit the same file on the same server:
+
+- `http://Evers-MacBook-Air.local:8000`
+- `http://10.8.33.66:8000`
+- `http://localhost:8000`
+- `http://127.0.0.1:8000`
+
+**Symptom**: you add a recipe on your phone via the `.local` URL, open the app on the Mac via `localhost:8000`, and see zero user-added recipes. Not a bug — just different storage buckets.
+
+**Fix**: always use the canonical URL (`http://Evers-MacBook-Air.local:8000/`) on every device. Phone bookmark, Mac browser, anywhere. No code change needed.
+
+**If you need to peek at one device's state from another**: open the canonical URL on both. Same origin → same `localStorage`.
+
+---
+
 ## When the stable URL stops working
 
 The `.local` hostname depends on mDNS/Bonjour. If something blocks it (some captive portals, guest wifi, VPN split-tunneling), fall back to the IP or run:
