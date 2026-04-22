@@ -33,6 +33,9 @@
   function mountOverlay() {
     // Styles inlined so this works even if the app CSS is still loading.
     var css = [
+      // Override inherited visibility:hidden from html.pin-locked body rule —
+      // #pin-gate is a child of body, so it inherits hidden without this.
+      '#pin-gate,#pin-gate *{visibility:visible !important;}',
       '#pin-gate{position:fixed;inset:0;z-index:2147483647;background:#000;',
       'display:flex;flex-direction:column;align-items:center;justify-content:center;',
       'font-family:-apple-system,BlinkMacSystemFont,"Jost",system-ui,sans-serif;',
