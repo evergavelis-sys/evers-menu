@@ -3,13 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name"apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ever's Menu">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Ever's Menu">
 <title>Ever's Menu</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<!-- PIN gate: set the lock class before body parses so there's no flash of the app. -->
+<script>document.documentElement.classList.add('pin-locked');</script>
+<style>html.pin-locked body{visibility:hidden!important;}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -463,6 +468,7 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 #sync-nav-btn { background:none; border:none; color:var(--text); opacity:.7; font-size:20px; cursor:pointer; padding:4px; }
 #sync-nav-btn:hover { opacity:1; }
 </style>
+<script defer src="./pin-gate.js"></script>
 </head>
 <body>
 
