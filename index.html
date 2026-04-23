@@ -467,6 +467,186 @@ body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text
 .sync-last { font-size:11px; color:var(--accent2); opacity:.7; text-align:center; }
 #sync-nav-btn { background:none; border:none; color:var(--text); opacity:.7; font-size:20px; cursor:pointer; padding:4px; }
 #sync-nav-btn:hover { opacity:1; }
+
+/* ===== FLUID LAYOUT ===== */
+/* Soft container — content breathes to ~1080px on wide screens, then stops.
+   Topbar + tabs keep their full-bleed border-bottom. */
+:root { --container: 1080px; --container-pad: 1rem; }
+
+.topbar,
+.tabs { padding-inline: max(var(--container-pad), calc(50% - var(--container) / 2)); }
+
+.main {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--container-pad) 6rem;
+}
+
+/* Tactile transitions everywhere that reacts to touch — radio-tuner feel */
+.recipe-row,
+.filter-chip,
+.stat-card,
+.sort-btn,
+.meta-pill,
+.pantry-btn {
+  transition: background 200ms cubic-bezier(.3,.7,.4,1),
+              border-color 200ms cubic-bezier(.3,.7,.4,1),
+              transform 140ms ease,
+              color 200ms ease;
+}
+
+/* ===== RECIPE TILES — cohesive with topbar ===== */
+/* Topbar uses accent pink for the title; category labels echo that. */
+.cat-section { margin-bottom: 18px; }
+.cat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.88;
+  padding: 18px 2px 10px;
+}
+
+.recipe-thumb {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: background 200ms cubic-bezier(.3,.7,.4,1),
+              border-color 200ms cubic-bezier(.3,.7,.4,1),
+              transform 140ms ease;
+}
+.recipe-thumb:hover {
+  background: var(--bg3);
+  border-color: rgba(176,74,138,0.38);
+  transform: translateY(-1px);
+}
+.recipe-thumb:active { transform: translateY(0); }
+
+.recipe-img {
+  width: 64px; height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(176,74,138,0.14), rgba(176,74,138,0.04));
+  border: 1px solid rgba(176,74,138,0.18);
+}
+.recipe-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.recipe-ico {
+  font-size: 30px;
+  line-height: 1;
+  filter: saturate(0.95);
+}
+
+.recipe-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.recipe-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.recipe-meta {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== RECIPE GRID — phone rows → tablet+ tile grid ===== */
+@media (min-width: 720px) {
+  #recipe-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 10px;
+  }
+  #recipe-sections > .cat-section {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 10px;
+  }
+  #recipe-sections > .cat-section > .cat-label {
+    grid-column: 1 / -1;
+    padding-bottom: 4px;
+  }
+  .recipe-thumb {
+    margin-bottom: 0;
+    padding: 14px 16px;
+    min-height: 92px;
+  }
+  .recipe-img { width: 68px; height: 68px; }
+  .recipe-ico { font-size: 32px; }
+  .recipe-name { font-size: 16px; white-space: normal; }
+  .recipe-meta { white-space: normal; }
+}
+
+/* ===== Legacy .recipe-row (ideas page) still works ===== */
+@media (min-width: 720px) {
+  /* Roomier topbar + tabs */
+  .topbar { height: calc(64px + env(safe-area-inset-top, 0px)); }
+  .topbar-title { font-size: 24px; }
+  .topbar-sub { font-size: 12px; }
+  .tab { padding: 15px 0 13px; font-size: 13px; }
+
+  /* Bottom sheets + modals: center + cap */
+  .detail-sheet,
+  .modal {
+    left: 50%;
+    right: auto;
+    width: 100%;
+    max-width: 620px;
+    transform: translate(-50%, 100%);
+  }
+  .detail-sheet.open,
+  .modal-overlay.open .modal { transform: translate(-50%, 0); }
+
+  /* Stats breathe */
+  .stats-row { gap: 10px; }
+  .stat-card { padding: 20px 14px; }
+
+  /* ===== STAGE MODE — cinematic on bigger screens ===== */
+  .stage-step-text { max-width: 1100px; font-size: clamp(26px, 4vw, 56px); }
+  .stage-timer-display { font-size: clamp(72px, 14vw, 160px); }
+  .stage-nav-btn { padding: 18px 36px; font-size: 16px; max-width: 260px; }
+  .stage-timer-btn { padding: 10px 22px; font-size: 14px; }
+  .stage-step-counter { font-size: 13px; letter-spacing: 0.16em; }
+  .stage-recipe-title { font-size: 15px; letter-spacing: 0.1em; }
+  .stage-done-title { font-size: 36px; }
+  .stage-done-sub { font-size: 17px; }
+}
+
+/* Breathing pulse on running Stage Mode timer — dial at rest, radio at idle */
+@keyframes evr-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.82; }
+}
+.stage-timer-display.running { animation: evr-breathe 2.6s ease-in-out infinite; }
+
+/* Large-screen polish */
+@media (min-width: 1024px) {
+  .topbar-title { letter-spacing: -0.5px; }
+  .stage-nav { padding: 20px 24px 40px; gap: 16px; }
+}
 </style>
 <script defer src="./pin-gate.js"></script>
 </head>
@@ -1004,14 +1184,20 @@ function renderRecipes(filter='', catFilter='') {
   _updateStats(filtered);
 }
 
+const _CAT_ICON = { bowl:'\u{1F963}', breakfast:'\u{1F373}', salad:'\u{1F957}', pasta:'\u{1F35D}', sides:'\u{1F954}', snack:'\u{1F34E}' };
+function _catIcon(cat) { return _CAT_ICON[cat] || '\u{1F37D}'; }
+
 function _recipeCard(r) {
   const score = _getCanMakeScore(r);
   const canBadge = score.matched >= 2 ? '<div class="can-make-badge">\u2713 ' + score.matched + '/' + score.total + ' items</div>' : '';
   const timeStr = r.time ? r.time + ' min' : '';
   const cal = r.macros?.calories ? r.macros.calories + ' cal' : '';
-  const photoHTML = r.photo ? '<img src="' + r.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" loading="lazy" />' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;">\u{1F373}</div>';
-  return '<div class="recipe-thumb" onclick=\'showDetail(' + JSON.stringify(r.id) + ')\'>' +
-    '<div style="width:80px;height:80px;border-radius:12px;overflow:hidden;background:var(--bg3);flex-shrink:0;">' + photoHTML + '</div>' +
+  const thumb = r.photo
+    ? '<img src="' + r.photo + '" loading="lazy" />'
+    : '<div class="recipe-ico">' + _catIcon(r.cat) + '</div>';
+  const idAttr = String(r.id).replace(/"/g, '&quot;');
+  return '<div class="recipe-thumb" data-cat="' + (r.cat||'') + '" data-recipe-id="' + idAttr + '">' +
+    '<div class="recipe-img">' + thumb + '</div>' +
     '<div class="recipe-info">' +
     '<div class="recipe-name">' + r.name + '</div>' +
     '<div class="recipe-meta">' + [r.cat, timeStr, cal].filter(Boolean).join(' · ') + '</div>' +
@@ -1019,6 +1205,16 @@ function _recipeCard(r) {
     '</div>' +
     '</div>';
 }
+
+// Delegated click handler for recipe thumbs (replaces inline onclick — more
+// robust across re-renders and avoids attribute-quoting fragility).
+document.addEventListener('click', function (e) {
+  var thumb = e.target.closest && e.target.closest('.recipe-thumb');
+  if (!thumb || !thumb.dataset.recipeId) return;
+  var id = thumb.dataset.recipeId;
+  var r = recipes.find(function (x) { return String(x.id) === id; });
+  if (r) showDetail(r.id);
+});
 
 function _updateStats(filtered) {
   const cats = new Set(filtered.map(r=>r.cat));
@@ -1643,21 +1839,23 @@ function toggleSort(btn) {
 // ===== SERVICE WORKER (Offline Mode) =====
 if ('serviceWorker' in navigator) {
   const swCode = `
-const CACHE = 'evers-menu-v6';
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
-  self.skipWaiting();
-});
+const CACHE = 'evers-menu-v7';
+self.addEventListener('install', e => { self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
   self.clients.claim();
 });
+// Network-first with cache fallback — always prefer fresh code; cache is only
+// the offline safety net. (Old cache-first pattern caused stale code to ship.)
 self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
-    const clone = res.clone();
-    caches.open(CACHE).then(c => c.put(e.request, clone));
-    return res;
-  }).catch(() => caches.match('/'))));
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request).then(res => {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, clone)).catch(() => {});
+      return res;
+    }).catch(() => caches.match(e.request).then(r => r || caches.match('./')))
+  );
 });
 `;
   const blob = new Blob([swCode], {type: 'application/javascript'});
