@@ -1450,6 +1450,7 @@ When asked for a recipe, respond with a JSON object in this exact format (no mar
   "cat": "bowl|breakfast|pasta|sides|snack|salad",
   "desc": "Short punchy one-liner description",
   "time": "X min",
+  "servings": 2,
   "tags": ["tag1","tag2"],
   "macros": {"cal": 500, "prot": 35, "carb": 45, "fat": 18},
   "ings": [["amount","ingredient"],["amount","ingredient"]],
@@ -1538,14 +1539,15 @@ function saveAIRecipe() {
   const newRecipe = {
     id: 'ai_' + Date.now(),
     name: r.name, cat: r.cat, desc: r.desc,
-    time: r.time, tags: [...(r.tags||[]),'ai-built'],
+    time: r.time, servings: r.servings || 1,
+    tags: [...(r.tags||[]),'ai-built'],
     macros: r.macros||null,
     ings: r.ings||[], steps: r.steps||[],
     note: r.note||'', custom: true
   };
   recipes.push(newRecipe);
   save(); renderRecipes();
-  aiMessages.push({role:'assistant',content:`{"type":"chat","message":"✓ Saved \"${r.name}\" to your recipes!"}`});
+  aiMessages.push({role:'assistant',content:`✓ Saved "${r.name}" to your recipes!`});
   renderAIMessages();
   window._pendingAIRecipe = null;
 }
