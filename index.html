@@ -1187,10 +1187,17 @@ function renderRecipes(filter='', catFilter='') {
 const _CAT_ICON = { bowl:'\u{1F963}', breakfast:'\u{1F373}', salad:'\u{1F957}', pasta:'\u{1F35D}', sides:'\u{1F954}', snack:'\u{1F34E}' };
 function _catIcon(cat) { return _CAT_ICON[cat] || '\u{1F37D}'; }
 
+function fmtTime(t) {
+  if (t == null) return '';
+  const s = String(t).trim();
+  if (!s) return '';
+  return /\b(min|hr|hour)/i.test(s) ? s : `${s} min`;
+}
+
 function _recipeCard(r) {
   const score = _getCanMakeScore(r);
   const canBadge = score.matched >= 2 ? '<div class="can-make-badge">\u2713 ' + score.matched + '/' + score.total + ' items</div>' : '';
-  const timeStr = r.time ? r.time + ' min' : '';
+  const timeStr = fmtTime(r.time);
   const cal = r.macros?.calories ? r.macros.calories + ' cal' : '';
   const thumb = r.photo
     ? '<img src="' + r.photo + '" loading="lazy" />'
@@ -1233,8 +1240,9 @@ function showDetail(id) {
   const r = recipes.find(x=>x.id===id);
   // Auto-set timer from recipe cook time
   if (r && r.time) {
-    const tm = r.time.match(/(\d+)\s*(?:hr|hour)?[^\d]*(\d*)\s*min/i);
-    const tmHr = r.time.match(/(\d+)\s*(?:hr|hour)/i);
+    const timeStr = String(r.time ?? '');
+    const tm = timeStr.match(/(\d+)\s*(?:hr|hour)?[^\d]*(\d*)\s*min/i);
+    const tmHr = timeStr.match(/(\d+)\s*(?:hr|hour)/i);
     if (tm || tmHr) {
       const hrs = tmHr ? parseInt(tmHr[1]) : 0;
       const mins = tm ? parseInt(tm[1]) : 0;
@@ -2438,7 +2446,7 @@ async function _runImport(prompt) {
     _importPendingRecipe = recipe;
     statusEl.textContent = '\u2705 Recipe extracted!';
     document.getElementById('import-preview-title').textContent = recipe.name;
-    document.getElementById('import-preview-meta').textContent = (recipe.category||'') + ' · ' + (recipe.time||'?') + ' min · ' + (recipe.macros?.calories||'?') + ' cal · ' + (recipe.ingredients?.length||0) + ' ingredients';
+    document.getElementById('import-preview-meta').textContent = (recipe.category||'') + ' · ' + (fmtTime(recipe.time)||'?') + ' · ' + (recipe.macros?.calories||'?') + ' cal · ' + (recipe.ingredients?.length||0) + ' ingredients';
     previewEl.classList.remove('hidden');
   } catch(e) {
     statusEl.textContent = '\u274C Error: ' + e.message;
