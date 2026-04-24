@@ -1535,10 +1535,24 @@ function renderAIMessages(pendingRecipe=null) {
 
 function saveAIRecipe() {
   const r = window._pendingAIRecipe;
-  if(!r) return;
+  if(!r) {
+    console.error('saveAIRecipe: no _pendingAIRecipe on window');
+    aiMessages.push({role:'assistant',content:'Hmm, I lost track of that recipe — try sending it again?'});
+    renderAIMessages();
+    return;
+  }
+  // Normalize cat to the lowercase singular form the app uses (AI sometimes
+  // returns "Bowls" / "Bowl" / etc.; keep the icon + grouping logic happy)
+  const normCat = ((r.cat || 'bowl') + '').toLowerCase()
+    .replace(/^(bowls?)$/, 'bowl')
+    .replace(/^(salads?)$/, 'salad')
+    .replace(/^(sides?)$/, 'sides')
+    .replace(/^(snacks?)$/, 'snack')
+    .replace(/^(pastas?)$/, 'pasta')
+    .replace(/^(breakfasts?)$/, 'breakfast');
   const newRecipe = {
     id: 'ai_' + Date.now(),
-    name: r.name, cat: r.cat, desc: r.desc,
+    name: r.name, cat: normCat, desc: r.desc,
     time: r.time, servings: r.servings || 1,
     tags: [...(r.tags||[]),'ai-built'],
     macros: r.macros||null,
@@ -1550,6 +1564,8 @@ function saveAIRecipe() {
   aiMessages.push({role:'assistant',content:`✓ Saved "${r.name}" to your recipes!`});
   renderAIMessages();
   window._pendingAIRecipe = null;
+  // Open the new recipe so the user sees it landed (Humanistic: visible success)
+  setTimeout(() => showDetail(newRecipe.id), 120);
 }
 
 // ---- SHOP ----
