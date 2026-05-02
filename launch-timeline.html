@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>evers-menu — launch timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:       #0a0a0a;
+  --paper:     #fafaf7;
+  --card:      #111111;
+  --card-up:   #191919;
+  --line:      rgba(250,250,247,0.07);
+  --line-up:   rgba(250,250,247,0.13);
+  --muted:     #6b6865;
+  --dim:       #3d3b39;
+  --voice:     #ec4899;
+  --solutions: #1e40af;
+  --live:      #22d3ee;
+  --ship:      #a7f3d0;
+  --warn:      #f59e0b;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'Jost', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ─── LAYOUT ─── */
+.wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+}
+
+/* ─── HEADER ─── */
+header {
+  margin-bottom: 3rem;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 2rem;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+/* SVG umbrella mark — inline recreation of the E15 logo */
+.brand-mark svg { width: 100%; height: 100%; }
+
+.brand-text {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--voice);
+}
+.brand-sub {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: lowercase;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+h1 {
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-transform: lowercase;
+  margin-bottom: 0.5rem;
+}
+
+h1 span { color: var(--voice); }
+
+.tagline {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 400;
+  margin-bottom: 2rem;
+}
+
+/* ─── COUNTDOWN ─── */
+.meta-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+
+.meta-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--line-up);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.meta-pill .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-live   { background: var(--live);  box-shadow: 0 0 6px var(--live); animation: pulse 2s ease-in-out infinite; }
+.dot-warn   { background: var(--warn); }
+.dot-ship   { background: var(--ship); }
+.dot-voice  { background: var(--voice); }
+
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.meta-pill strong { color: var(--paper); font-weight: 600; }
+.meta-pill span   { color: var(--muted); }
+
+/* ─── PROGRESS BAR ─── */
+.progress-wrap {
+  margin-bottom: 2.5rem;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+}
+.progress-track {
+  height: 4px;
+  background: var(--card-up);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--voice), var(--live));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ─── LEGEND ─── */
+.legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.badge-both    { background: rgba(236,72,153,0.15); color: var(--voice); border: 1px solid rgba(236,72,153,0.3); }
+.badge-ios     { background: rgba(34,211,238,0.1);  color: var(--live);  border: 1px solid rgba(34,211,238,0.25); }
+.badge-android { background: rgba(167,243,208,0.1); color: var(--ship);  border: 1px solid rgba(167,243,208,0.25); }
+.badge-gate    { background: rgba(245,158,11,0.12); color: var(--warn);  border: 1px solid rgba(245,158,11,0.3); }
+
+/* ─── PHASES ─── */
+.phase {
+  margin-bottom: 2.5rem;
+}
+
+.phase-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.phase-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+.phase-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.phase-dates {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+/* ─── STEP CARDS ─── */
+.step {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.step:hover { border-color: var(--line-up); }
+
+.step.done {
+  opacity: 0.55;
+  border-color: rgba(167,243,208,0.2);
+}
+
+.step.done .step-title {
+  text-decoration: line-through;
+  text-decoration-color: var(--muted);
+}
+
+.step.gate { border-left: 3px solid var(--warn); }
+
+.step-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 1.1rem 1.25rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.step-check {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--line-up);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition: background 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+
+.step.done .step-check {
+  background: rgba(167,243,208,0.2);
+  border-color: var(--ship);
+}
+
+.step-check svg { display: none; }
+.step.done .step-check svg { display: block; }
+
+.step-meta { flex: 1; min-width: 0; }
+
+.step-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+
+.step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+.step-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--paper);
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+
+.step-brief {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.step-right {
+  flex-shrink: 0;
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
+.step-effort {
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.step-deadline {
+  color: var(--muted);
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.step-deadline.urgent { color: var(--voice); font-weight: 600; }
+
+/* ─── EXPANDED DETAIL ─── */
+.step-detail {
+  display: none;
+  padding: 0 1.25rem 1.25rem;
+  border-top: 1px solid var(--line);
+  margin-top: -1px;
+}
+
+.step.open .step-detail { display: block; }
+
+.step-detail-inner {
+  padding-top: 1rem;
+}
+
+.detail-section {
+  margin-bottom: 1rem;
+}
+
+.detail-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 0.5rem;
+}
+
+.detail-body {
+  font-size: 13.5px;
+  color: rgba(250,250,247,0.75);
+  line-height: 1.65;
+}
+
+/* checklist inside step */
+.criteria {
+  list-style: none;
+  display: grid;
+  gap: 5px;
+}
+
+.criteria li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13px;
+  color: rgba(250,250,247,0.7);
+  line-height: 1.5;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.criteria li::before {
+  content: '○';
+  color: var(--dim);
+  flex-shrink: 0;
+  font-size: 12px;
+  margin-top: 2px;
+  transition: color 0.15s;
+}
+
+.criteria li.checked {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--dim);
+}
+
+.criteria li.checked::before {
+  content: '●';
+  color: var(--ship);
+}
+
+.code-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: var(--card-up);
+  border: 1px solid var(--line-up);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: var(--live);
+  margin-top: 0.5rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.gate-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 13px;
+  color: var(--warn);
+  margin-bottom: 0.75rem;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-brand {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.footer-brand em { color: var(--voice); font-style: normal; }
+
+.reset-btn {
+  background: none;
+  border: 1px solid var(--line-up);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.reset-btn:hover { border-color: var(--voice); color: var(--voice); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 540px) {
+  .step-right { display: none; }
+  .meta-row { gap: 0.5rem; }
+  .phase-dates { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand-row">
+      <div class="brand-mark">
+        <!-- E15 umbrella mark, inline SVG recreation -->
+        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- umbrella top arc -->
+          <path d="M6 22 C6 12 12 5 22 5 C32 5 38 12 38 22 Z" fill="#ec4899"/>
+          <!-- stem -->
+          <rect x="21" y="22" width="2" height="14" fill="#ec4899"/>
+          <!-- hook -->
+          <path d="M23 36 Q23 40 19 40 Q15 40 15 36" stroke="#ec4899" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- E -->
+          <rect x="6" y="24" width="8" height="1.5" fill="#ec4899"/>
+          <rect x="6" y="28" width="6" height="1.5" fill="#ec4899"/>
+          <rect x="6" y="32" width="8" height="1.5" fill="#ec4899"/>
+          <rect x="6" y="24" width="1.5" height="9.5" fill="#ec4899"/>
+          <!-- 1 -->
+          <rect x="17" y="24" width="1.5" height="9.5" fill="#ec4899"/>
+          <!-- 5 -->
+          <rect x="21" y="24" width="7" height="1.5" fill="#ec4899"/>
+          <rect x="21" y="24" width="1.5" height="5" fill="#ec4899"/>
+          <rect x="21" y="28.5" width="7" height="1.5" fill="#ec4899"/>
+          <rect x="27" y="28.5" width="1.5" height="5" fill="#ec4899"/>
+          <rect x="21" y="33.5" width="7.5" height="1.5" fill="#ec4899"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-text">E15SOLUTIONS</div>
+        <div class="brand-sub">evers-menu — launch plan</div>
+      </div>
+    </div>
+
+    <h1>app store<br><span>launch timeline</span></h1>
+    <p class="tagline">iOS + Android · target June 15, 2026 · 44 days</p>
+
+    <div class="meta-row">
+      <div class="meta-pill">
+        <div class="dot dot-live"></div>
+        <span>deadline</span>
+        <strong id="countdown">—</strong>
+      </div>
+      <div class="meta-pill">
+        <div class="dot dot-warn"></div>
+        <span>last safe iOS submit</span>
+        <strong>Jun 10</strong>
+      </div>
+      <div class="meta-pill">
+        <div class="dot dot-ship"></div>
+        <span>last safe Android submit</span>
+        <strong>Jun 13</strong>
+      </div>
+      <div class="meta-pill">
+        <div class="dot dot-voice"></div>
+        <span>steps complete</span>
+        <strong id="steps-done">0 / 15</strong>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>overall progress</span>
+        <span id="pct-label">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="badge badge-both">both</span> shared step, both platforms</div>
+      <div class="legend-item"><span class="badge badge-ios">ios</span> Apple / Xcode only</div>
+      <div class="legend-item"><span class="badge badge-android">android</span> Google / Bubblewrap only</div>
+      <div class="legend-item"><span class="badge badge-gate">⚠ gate</span> blocks launch if skipped</div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       PHASE 0 — START TODAY
+  ═══════════════════════════════════════════ -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-num">00</span>
+      <span class="phase-title">start today</span>
+      <span class="phase-dates">May 2–5</span>
+    </div>
+
+    <!-- step 1 -->
+    <div class="step gate" id="s1">
+      <div class="step-top" onclick="toggleStep('s1')">
+        <div class="step-check" onclick="toggleDone(event,'s1')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">01</span>
+            <span class="badge badge-ios">ios</span>
+            <span class="badge badge-gate">⚠ gate</span>
+          </div>
+          <div class="step-title">Apple Developer Program enrollment</div>
+          <div class="step-brief">$99/year · required to submit, use TestFlight, or sign builds</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">15 min</div>
+          <div class="step-deadline urgent">TODAY</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="gate-banner">⚠ gating — nothing else on the iOS track can start until this is approved</div>
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">Go to developer.apple.com/programs/enroll. Sign in with your Apple ID. Complete the enrollment form. Pay $99. Processing takes 24–48 hours — sometimes faster. Approval comes via email.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">Enrollment submitted at developer.apple.com</li>
+              <li onclick="toggleCriteria(this)">$99 payment confirmed</li>
+              <li onclick="toggleCriteria(this)">Approval email received</li>
+              <li onclick="toggleCriteria(this)">Can log into App Store Connect at appstoreconnect.apple.com</li>
+              <li onclick="toggleCriteria(this)">New app slot visible in App Store Connect</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 2 -->
+    <div class="step" id="s2">
+      <div class="step-top" onclick="toggleStep('s2')">
+        <div class="step-check" onclick="toggleDone(event,'s2')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">02</span>
+            <span class="badge badge-android">android</span>
+          </div>
+          <div class="step-title">Google Play Console enrollment</div>
+          <div class="step-brief">$25 one-time · instant approval · unlocks Android publishing</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">20 min</div>
+          <div class="step-deadline urgent">TODAY</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">Go to play.google.com/console. Sign in with your Google account. Pay $25 one-time registration fee. Account is typically active within minutes, no waiting period unlike Apple.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">$25 payment confirmed</li>
+              <li onclick="toggleCriteria(this)">Can access Play Console dashboard</li>
+              <li onclick="toggleCriteria(this)">"Create app" button is available</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 3 -->
+    <div class="step gate" id="s3">
+      <div class="step-top" onclick="toggleStep('s3')">
+        <div class="step-check" onclick="toggleDone(event,'s3')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">03</span>
+            <span class="badge badge-both">both</span>
+            <span class="badge badge-gate">⚠ gate</span>
+          </div>
+          <div class="step-title">Deploy to Cloudflare Pages — lock the URL</div>
+          <div class="step-brief">Stable HTTPS URL required before Xcode wrapper and Bubblewrap TWA can be generated</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">1–2 hrs</div>
+          <div class="step-deadline">May 3–4</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="gate-banner">⚠ gating — both the iOS WKWebView and Android TWA are bound to this URL. Don't change it after generating either wrapper.</div>
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">Push evers-menu repo to Cloudflare Pages. Free tier is fine. The default <code>*.pages.dev</code> domain works for v0 — no custom domain required yet. Make sure the deploy URL serves the app correctly over HTTPS with the manifest and service worker working.</div>
+          </div>
+          <div class="code-note">npm install -g wrangler
+wrangler pages project create evers-menu
+wrangler pages deploy . --project-name=evers-menu</div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">App live at stable HTTPS URL (e.g. evers-menu.pages.dev)</li>
+              <li onclick="toggleCriteria(this)">manifest.webmanifest loads correctly at /manifest.webmanifest</li>
+              <li onclick="toggleCriteria(this)">Service worker registers (check DevTools → Application)</li>
+              <li onclick="toggleCriteria(this)">App installs as PWA from Safari on iPhone 17 Pro</li>
+              <li onclick="toggleCriteria(this)">All tabs functional (Recipes, Log, Build, Shopping, Ideas)</li>
+              <li onclick="toggleCriteria(this)">AI import works (Cloudflare Worker → Claude)</li>
+              <li onclick="toggleCriteria(this)">Cook mode + wake lock functional</li>
+              <li onclick="toggleCriteria(this)">URL saved somewhere permanent (vault + both wrappers will reference it)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /phase 0 -->
+
+  <!-- ═══════════════════════════════════════════
+       PHASE 1 — CORE DEV
+  ═══════════════════════════════════════════ -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-num">01</span>
+      <span class="phase-title">core dev</span>
+      <span class="phase-dates">May 5–20</span>
+    </div>
+
+    <!-- step 4 -->
+    <div class="step gate" id="s4">
+      <div class="step-top" onclick="toggleStep('s4')">
+        <div class="step-check" onclick="toggleDone(event,'s4')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">04</span>
+            <span class="badge badge-both">both</span>
+            <span class="badge badge-gate">⚠ gate</span>
+          </div>
+          <div class="step-title">Build Stage Mode v0</div>
+          <div class="step-brief">BRAND.md hard rule: every SOLUTIONS app ships Stage Mode v0 before public launch</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">3–5 days</div>
+          <div class="step-deadline">by May 18</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="gate-banner">⚠ gating — non-negotiable per BRAND.md §14. Cannot submit to either store without this. Biggest dev lift on this list — start here.</div>
+          <div class="detail-section">
+            <div class="detail-label">scope (Stage v0 definition)</div>
+            <div class="detail-body">TV mirror mode + ambient big timer + music-reactive background. No gesture, no XR. Designed for casting to the Google TV / LG TV via AirScreen. This is the window of the app — the ambient surface that makes it feel like a house.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">implementation notes</div>
+            <div class="detail-body">Add a "Stage" tab or a long-press → Stage trigger. Full-screen dark mode. Big cooking timer centered. Background reacts to ambient beat (Web Audio API on the device speaker, or a fixed slow pulse animation as v0 fallback). Cast instructions visible. Should look good from 10 feet away on a TV.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">Stage Mode accessible from within the app (tab or trigger)</li>
+              <li onclick="toggleCriteria(this)">Full-screen layout — no browser chrome visible</li>
+              <li onclick="toggleCriteria(this)">Big ambient cooking timer (start/stop/reset)</li>
+              <li onclick="toggleCriteria(this)">Music-reactive or ambient background animation</li>
+              <li onclick="toggleCriteria(this)">Casts and displays correctly on Google TV via AirScreen</li>
+              <li onclick="toggleCriteria(this)">Readable from across the room (test at 10 ft)</li>
+              <li onclick="toggleCriteria(this)">Wake lock active in Stage Mode (screen stays on)</li>
+              <li onclick="toggleCriteria(this)">Deployed to Cloudflare Pages (same URL as step 3)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 5 -->
+    <div class="step gate" id="s5">
+      <div class="step-top" onclick="toggleStep('s5')">
+        <div class="step-check" onclick="toggleDone(event,'s5')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">05</span>
+            <span class="badge badge-both">both</span>
+            <span class="badge badge-gate">⚠ gate</span>
+          </div>
+          <div class="step-title">Write + host privacy policy</div>
+          <div class="step-brief">Required by both Apple and Google · app calls external APIs so this is mandatory</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">1–2 hrs</div>
+          <div class="step-deadline">by May 15</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="gate-banner">⚠ gating — both stores will reject the submission without a live privacy policy URL</div>
+          <div class="detail-section">
+            <div class="detail-label">what to cover</div>
+            <div class="detail-body">Data collected (none stored server-side — localStorage only on device). External services used: Cloudflare Worker, Anthropic Claude API (for recipe AI). No account creation, no personal data sold. Contact email. Effective date. One page is fine.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">where to host</div>
+            <div class="detail-body">Simplest: add <code>/privacy.html</code> to the evers-menu Cloudflare Pages deploy. That gives you a permanent URL at the same domain as the app. Notion public page also works if you want zero-code.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">Privacy policy written and covers all external API calls</li>
+              <li onclick="toggleCriteria(this)">Hosted at a stable public URL (not behind auth)</li>
+              <li onclick="toggleCriteria(this)">URL saved — will be pasted into both App Store Connect and Play Console</li>
+              <li onclick="toggleCriteria(this)">URL accessible from mobile browser</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 6 -->
+    <div class="step" id="s6">
+      <div class="step-top" onclick="toggleStep('s6')">
+        <div class="step-check" onclick="toggleDone(event,'s6')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">06</span>
+            <span class="badge badge-both">both</span>
+          </div>
+          <div class="step-title">App icon finalization</div>
+          <div class="step-brief">iOS needs 1024×1024 · Android needs adaptive icon layers · generate from existing assets</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">2–3 hrs</div>
+          <div class="step-deadline">by May 15</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">iOS requirements</div>
+            <div class="detail-body">Single 1024×1024px PNG. No transparency. No rounded corners (Apple applies the mask). Must be legible at 29×29px. Generate all sizes from this master using Xcode's asset catalog or makeappicon.com.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Android requirements</div>
+            <div class="detail-body">Adaptive icon = foreground layer (icon art, 108×108dp safe zone = center 72dp) + background layer (solid color or pattern). Bubblewrap will generate these from your manifest icons if they're correctly sized. Your existing icon-512.png and icon-512-maskable.png are the right starting point.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">1024×1024 PNG exported, no transparency, no alpha</li>
+              <li onclick="toggleCriteria(this)">Icon reads clearly at thumbnail size (60×60px)</li>
+              <li onclick="toggleCriteria(this)">Matches E15 brand palette (ink bg, voice accent)</li>
+              <li onclick="toggleCriteria(this)">Added to Xcode asset catalog (iOS)</li>
+              <li onclick="toggleCriteria(this)">icon-512-maskable.png confirmed safe-zone-compliant (Android)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /phase 1 -->
+
+  <!-- ═══════════════════════════════════════════
+       PHASE 2 — iOS BUILD
+  ═══════════════════════════════════════════ -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-num">02</span>
+      <span class="phase-title">iOS build</span>
+      <span class="phase-dates">May 15–28</span>
+    </div>
+
+    <!-- step 7 -->
+    <div class="step" id="s7">
+      <div class="step-top" onclick="toggleStep('s7')">
+        <div class="step-check" onclick="toggleDone(event,'s7')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">07</span>
+            <span class="badge badge-ios">ios</span>
+          </div>
+          <div class="step-title">Xcode WKWebView wrapper</div>
+          <div class="step-brief">Thin native SwiftUI shell · loads the Cloudflare Pages URL · no app rewrite needed</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">1 day</div>
+          <div class="step-deadline">by May 20</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">Open Xcode → New Project → App (SwiftUI). Set bundle identifier (e.g. <code>com.e15solutions.eversmenu</code>). In ContentView, replace the default body with a WKWebView loading your Cloudflare Pages URL. Add WKWebView via UIViewRepresentable wrapper. Enable JavaScript. Set background to black. That's the whole app.</div>
+          </div>
+          <div class="code-note">// ContentView.swift (simplified)
+import SwiftUI
+import WebKit
+
+struct WebView: UIViewRepresentable {
+  let url = URL(string: "https://evers-menu.pages.dev")!
+  func makeUIView(context: Context) -> WKWebView {
+    let config = WKWebViewConfiguration()
+    config.allowsInlineMediaPlayback = true
+    let wv = WKWebView(frame: .zero, configuration: config)
+    wv.backgroundColor = UIColor(red:0.04,green:0.04,blue:0.04,alpha:1)
+    wv.load(URLRequest(url: url))
+    return wv
+  }
+  func updateUIView(_ uiView: WKWebView, context: Context) {}
+}
+
+struct ContentView: View {
+  var body: some View { WebView().ignoresSafeArea() }
+}</div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">Xcode project created with correct bundle ID</li>
+              <li onclick="toggleCriteria(this)">WKWebView loads app from Cloudflare Pages URL</li>
+              <li onclick="toggleCriteria(this)">No Safari chrome visible (full screen)</li>
+              <li onclick="toggleCriteria(this)">Safe area / Dynamic Island handled (no content hidden)</li>
+              <li onclick="toggleCriteria(this)">JavaScript enabled and working</li>
+              <li onclick="toggleCriteria(this)">localStorage persists between app launches</li>
+              <li onclick="toggleCriteria(this)">Builds successfully on MacBook (no signing errors)</li>
+              <li onclick="toggleCriteria(this)">Runs on iPhone 17 Pro simulator</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 8 -->
+    <div class="step" id="s8">
+      <div class="step-top" onclick="toggleStep('s8')">
+        <div class="step-check" onclick="toggleDone(event,'s8')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">08</span>
+            <span class="badge badge-ios">ios</span>
+          </div>
+          <div class="step-title">App Store assets + metadata</div>
+          <div class="step-brief">Screenshots, name, subtitle, description, keywords, category — all required before submission</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">1 day</div>
+          <div class="step-deadline">by May 22</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">required assets</div>
+            <div class="detail-body">Screenshots: minimum 3, must be iPhone 6.7" size (1290×2796px). Capture: Recipes tab, Cook Mode, AI chat, Stage Mode. Screenshots must match the actual app — don't use mockups that show features you don't have.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">metadata guide</div>
+            <div class="detail-body"><strong>Name:</strong> Ever's Menu (30 char max) · <strong>Subtitle:</strong> Kitchen OS (30 char max) · <strong>Category:</strong> Food & Drink · <strong>Age rating:</strong> 4+ · <strong>Keywords:</strong> recipe, meal planning, cooking, kitchen, meal tracker, food log (100 char max)</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">3+ iPhone 6.7" screenshots captured at correct resolution</li>
+              <li onclick="toggleCriteria(this)">Screenshots show real app functionality (not mocks)</li>
+              <li onclick="toggleCriteria(this)">App name, subtitle, description filled in App Store Connect</li>
+              <li onclick="toggleCriteria(this)">Keywords set (100 char max)</li>
+              <li onclick="toggleCriteria(this)">Category: Food & Drink</li>
+              <li onclick="toggleCriteria(this)">Privacy policy URL pasted in</li>
+              <li onclick="toggleCriteria(this)">Age rating questionnaire completed (4+)</li>
+              <li onclick="toggleCriteria(this)">Pricing set (Free)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 9 -->
+    <div class="step" id="s9">
+      <div class="step-top" onclick="toggleStep('s9')">
+        <div class="step-check" onclick="toggleDone(event,'s9')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">09</span>
+            <span class="badge badge-ios">ios</span>
+          </div>
+          <div class="step-title">TestFlight internal beta</div>
+          <div class="step-brief">Install on iPhone 17 Pro · cook real meals · find WKWebView-specific bugs before review</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">3–5 days</div>
+          <div class="step-deadline">May 23–28</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">Archive the build in Xcode (Product → Archive → Distribute → TestFlight). Add yourself as internal tester. Install via TestFlight app on iPhone 17 Pro. Use it for 3–5 days of actual cooking. This is the only way to find bugs that only appear in WKWebView (as opposed to Safari).</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">known WKWebView gotchas to test</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">Safe area: Dynamic Island doesn't overlap content</li>
+              <li onclick="toggleCriteria(this)">Keyboard: layout doesn't break when keyboard opens in search/add fields</li>
+              <li onclick="toggleCriteria(this)">localStorage: data persists after closing and reopening app</li>
+              <li onclick="toggleCriteria(this)">Service worker: offline mode works (airplane mode test)</li>
+              <li onclick="toggleCriteria(this)">Wake lock: screen stays on during cook mode</li>
+              <li onclick="toggleCriteria(this)">Stage Mode: casts correctly to TV via AirPlay</li>
+              <li onclick="toggleCriteria(this)">AI import: recipe URL import works on real device</li>
+              <li onclick="toggleCriteria(this)">Pin gate: pin lock functions correctly</li>
+              <li onclick="toggleCriteria(this)">Scroll: no rubber-band scroll revealing white background</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /phase 2 -->
+
+  <!-- ═══════════════════════════════════════════
+       PHASE 3 — ANDROID BUILD (parallel)
+  ═══════════════════════════════════════════ -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-num">03</span>
+      <span class="phase-title">android build <span style="color:var(--muted);font-size:11px;letter-spacing:1px;font-weight:400">— parallel with Phase 2</span></span>
+      <span class="phase-dates">May 15–25</span>
+    </div>
+
+    <!-- step 10 -->
+    <div class="step gate" id="s10">
+      <div class="step-top" onclick="toggleStep('s10')">
+        <div class="step-check" onclick="toggleDone(event,'s10')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">10</span>
+            <span class="badge badge-android">android</span>
+            <span class="badge badge-gate">⚠ gate</span>
+          </div>
+          <div class="step-title">Digital Asset Links (assetlinks.json)</div>
+          <div class="step-brief">Proves the Play Store app owns the domain · without this TWA falls back to Chrome UI</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">30 min</div>
+          <div class="step-deadline">by May 17</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="gate-banner">⚠ gating — without this file correctly deployed, the TWA shows Chrome's browser UI instead of running full-screen. Kills the native feel.</div>
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">Bubblewrap generates the contents of this file during init. After running <code>bubblewrap init</code>, copy the generated SHA-256 fingerprint and create the file at <code>/.well-known/assetlinks.json</code> in your Cloudflare Pages deploy. Must be served with <code>Content-Type: application/json</code>.</div>
+          </div>
+          <div class="code-note">// /.well-known/assetlinks.json (Bubblewrap generates this for you)
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.e15solutions.eversmenu",
+    "sha256_cert_fingerprints": ["YOUR_FINGERPRINT_FROM_BUBBLEWRAP"]
+  }
+}]</div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">assetlinks.json live at https://[your-domain]/.well-known/assetlinks.json</li>
+              <li onclick="toggleCriteria(this)">File returns correct Content-Type: application/json</li>
+              <li onclick="toggleCriteria(this)">SHA-256 fingerprint matches the keystore from Bubblewrap</li>
+              <li onclick="toggleCriteria(this)">Verified via: https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://[your-domain]&relation=delegate_permission/common.handle_all_urls</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 11 -->
+    <div class="step" id="s11">
+      <div class="step-top" onclick="toggleStep('s11')">
+        <div class="step-check" onclick="toggleDone(event,'s11')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">11</span>
+            <span class="badge badge-android">android</span>
+          </div>
+          <div class="step-title">Bubblewrap TWA — generate + sign</div>
+          <div class="step-brief">CLI tool generates a signed .aab from your PWA manifest · the whole Android app in an afternoon</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">2–3 hrs</div>
+          <div class="step-deadline">by May 20</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">Install Bubblewrap, run init pointing at your manifest URL, answer the prompts (package name, app name, icon paths), generate a signing keystore, build. Output is a <code>.aab</code> file ready for Play Console upload. Save the keystore file — losing it means you can never update this app listing.</div>
+          </div>
+          <div class="code-note">npm install -g @bubblewrap/cli
+bubblewrap init --manifest https://evers-menu.pages.dev/manifest.webmanifest
+# Answer prompts: package name, display name, icon, orientation
+bubblewrap build
+# outputs: app-release-signed.aab + signing keystore</div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">Bubblewrap init completes without errors</li>
+              <li onclick="toggleCriteria(this)">Signing keystore generated and backed up somewhere safe (NOT in git)</li>
+              <li onclick="toggleCriteria(this)">Keystore password saved to password manager</li>
+              <li onclick="toggleCriteria(this)">app-release-signed.aab built successfully</li>
+              <li onclick="toggleCriteria(this)">Package name is com.e15solutions.eversmenu (or chosen identifier)</li>
+              <li onclick="toggleCriteria(this)">TWA runs full-screen on an Android device (no Chrome UI bar)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 12 -->
+    <div class="step" id="s12">
+      <div class="step-top" onclick="toggleStep('s12')">
+        <div class="step-check" onclick="toggleDone(event,'s12')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">12</span>
+            <span class="badge badge-android">android</span>
+          </div>
+          <div class="step-title">Play Store listing + submit</div>
+          <div class="step-brief">Upload .aab, fill metadata, content rating, privacy URL · review is typically same-day to 24hr</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">1 day</div>
+          <div class="step-deadline">by May 25</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">In Play Console: Create app → upload .aab to Internal Testing first (lets you install on your own device immediately, no review). Promote to Production when ready. Fill all store listing fields. Complete content rating questionnaire. Add privacy policy URL. Submit for review.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">.aab uploaded to Play Console without errors</li>
+              <li onclick="toggleCriteria(this)">Internal Testing track active — installed on a test Android device</li>
+              <li onclick="toggleCriteria(this)">Store listing: title, short description, full description, category (Food & Drink)</li>
+              <li onclick="toggleCriteria(this)">Screenshots: at least 2 phone screenshots</li>
+              <li onclick="toggleCriteria(this)">Feature graphic (1024×500px) created</li>
+              <li onclick="toggleCriteria(this)">Content rating questionnaire completed</li>
+              <li onclick="toggleCriteria(this)">Privacy policy URL added</li>
+              <li onclick="toggleCriteria(this)">Production release submitted for review</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /phase 3 -->
+
+  <!-- ═══════════════════════════════════════════
+       PHASE 4 — REVIEW + LAUNCH
+  ═══════════════════════════════════════════ -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-num">04</span>
+      <span class="phase-title">review + launch</span>
+      <span class="phase-dates">Jun 1–15</span>
+    </div>
+
+    <!-- step 13 -->
+    <div class="step gate" id="s13">
+      <div class="step-top" onclick="toggleStep('s13')">
+        <div class="step-check" onclick="toggleDone(event,'s13')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">13</span>
+            <span class="badge badge-ios">ios</span>
+            <span class="badge badge-gate">⚠ gate</span>
+          </div>
+          <div class="step-title">Submit to App Store Review</div>
+          <div class="step-brief">Hard deadline: submit by June 10 · leaves 5-day buffer for rejection + resubmit</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">30 min</div>
+          <div class="step-deadline urgent">by Jun 10</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="gate-banner">⚠ hard deadline — do not submit after June 10. First submission average is 1–3 days, but rejections can cost an extra cycle. You need the buffer.</div>
+          <div class="detail-section">
+            <div class="detail-label">common first-submission rejection reasons</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">Guideline 4.2 — minimum functionality (app is too thin or just a web clip). Mitigate by having Cook Mode, Stage Mode, AI import all working visibly.</li>
+              <li onclick="toggleCriteria(this)">Missing privacy policy URL in metadata</li>
+              <li onclick="toggleCriteria(this)">Screenshots don't match actual app functionality</li>
+              <li onclick="toggleCriteria(this)">App crashes on launch (test on clean simulator before submit)</li>
+              <li onclick="toggleCriteria(this)">App requires login to evaluate (reviewers need to get in without an account)</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">Build archived and uploaded from Xcode → Organizer</li>
+              <li onclick="toggleCriteria(this)">Build selected in App Store Connect</li>
+              <li onclick="toggleCriteria(this)">All metadata, screenshots, privacy URL confirmed present</li>
+              <li onclick="toggleCriteria(this)">Submitted for review — status shows "Waiting for Review"</li>
+              <li onclick="toggleCriteria(this)">Submitted on or before June 10</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 14 -->
+    <div class="step" id="s14">
+      <div class="step-top" onclick="toggleStep('s14')">
+        <div class="step-check" onclick="toggleDone(event,'s14')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">14</span>
+            <span class="badge badge-ios">ios</span>
+            <span class="badge badge-android">android</span>
+          </div>
+          <div class="step-title">Handle review feedback</div>
+          <div class="step-brief">Have a fix-ready build. Keep Xcode and Cloudflare Pages both hot. Android usually approves fast.</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">1–2 days buffer</div>
+          <div class="step-deadline">Jun 10–13</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">iOS rejection playbook</div>
+            <div class="detail-body">Rejection arrives via email + App Store Connect resolution center. Read the specific guideline cited. Most issues are fixable in under a day. Resubmit immediately — second reviews are faster. If rejected for 4.2 (minimum functionality), make Cook Mode and Stage Mode the first things visible in your screenshots and description.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Android rejection playbook</div>
+            <div class="detail-body">Play Console shows the specific policy violation. Most Android rejections are metadata or content rating issues, not functionality issues. Fix and resubmit — Play reviews are typically hours, not days.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">iOS: status shows "Approved" or "Ready for Sale"</li>
+              <li onclick="toggleCriteria(this)">Android: status shows "Published" in Play Console</li>
+              <li onclick="toggleCriteria(this)">Any rejection addressed and resubmitted within 24 hours</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step 15 -->
+    <div class="step" id="s15">
+      <div class="step-top" onclick="toggleStep('s15')">
+        <div class="step-check" onclick="toggleDone(event,'s15')">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-meta">
+          <div class="step-badges">
+            <span class="step-num">15</span>
+            <span class="badge badge-both">both</span>
+          </div>
+          <div class="step-title">Approve release — June 15</div>
+          <div class="step-brief">Hold the release in App Store Connect · manually approve on June 15 · it ships</div>
+        </div>
+        <div class="step-right">
+          <div class="step-effort">5 min</div>
+          <div class="step-deadline urgent">Jun 15</div>
+        </div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">what to do</div>
+            <div class="detail-body">In App Store Connect, after approval, set release to "Manually release this version." On June 15, press Release. For Android, Play Console lets you set a staged rollout — 100% is fine for a personal app. evers-menu moves from workshop to canonical. First E15SOLUTIONS app shipped.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">acceptance criteria</div>
+            <ul class="criteria">
+              <li onclick="toggleCriteria(this)">iOS: app live on App Store, searchable by name</li>
+              <li onclick="toggleCriteria(this)">Android: app live on Play Store, searchable by name</li>
+              <li onclick="toggleCriteria(this)">App downloads and runs clean on fresh install (no prior data)</li>
+              <li onclick="toggleCriteria(this)">Vault updated: evers-menu status → canonical</li>
+              <li onclick="toggleCriteria(this)">E15-CONTEXT.md updated with App Store links</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /phase 4 -->
+
+  <footer>
+    <div class="footer-brand"><em>E15</em>SOLUTIONS · evers-menu · launch timeline</div>
+    <button class="reset-btn" onclick="resetAll()">reset all progress</button>
+  </footer>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────
+const STORAGE_KEY = 'em-launch-v1';
+
+function getState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+// ─── STEP DONE/UNDONE ────────────────────────────────
+function toggleDone(event, id) {
+  event.stopPropagation();
+  const el = document.getElementById(id);
+  const state = getState();
+  const isDone = el.classList.contains('done');
+  if (isDone) {
+    el.classList.remove('done');
+    state[id] = { done: false, criteria: state[id]?.criteria || {} };
+  } else {
+    el.classList.add('done');
+    el.classList.remove('open');
+    state[id] = { done: true, criteria: state[id]?.criteria || {} };
+  }
+  saveState(state);
+  updateProgress();
+}
+
+// ─── STEP OPEN/CLOSE ─────────────────────────────────
+function toggleStep(id) {
+  const el = document.getElementById(id);
+  if (el.classList.contains('done')) return;
+  el.classList.toggle('open');
+}
+
+// ─── CRITERIA ────────────────────────────────────────
+function toggleCriteria(li) {
+  li.classList.toggle('checked');
+  const step = li.closest('.step');
+  const state = getState();
+  const sid = step.id;
+  if (!state[sid]) state[sid] = {};
+  if (!state[sid].criteria) state[sid].criteria = {};
+  const idx = Array.from(li.parentElement.children).indexOf(li);
+  state[sid].criteria[idx] = li.classList.contains('checked');
+  saveState(state);
+}
+
+// ─── PROGRESS ────────────────────────────────────────
+function updateProgress() {
+  const steps = document.querySelectorAll('.step');
+  const done = document.querySelectorAll('.step.done').length;
+  const total = steps.length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+  document.getElementById('steps-done').textContent = done + ' / ' + total;
+}
+
+// ─── COUNTDOWN ───────────────────────────────────────
+function updateCountdown() {
+  const target = new Date('2026-06-15T00:00:00');
+  const now = new Date();
+  const diff = target - now;
+  if (diff <= 0) {
+    document.getElementById('countdown').textContent = 'shipped';
+    return;
+  }
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hrs  = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  document.getElementById('countdown').textContent = days + 'd ' + hrs + 'h';
+}
+
+// ─── RESTORE STATE ───────────────────────────────────
+function restoreState() {
+  const state = getState();
+  Object.keys(state).forEach(sid => {
+    const el = document.getElementById(sid);
+    if (!el) return;
+    if (state[sid].done) el.classList.add('done');
+
+    // restore criteria
+    const crit = state[sid].criteria || {};
+    const items = el.querySelectorAll('.criteria li');
+    Object.keys(crit).forEach(idx => {
+      if (crit[idx] && items[idx]) items[idx].classList.add('checked');
+    });
+  });
+  updateProgress();
+}
+
+// ─── RESET ───────────────────────────────────────────
+function resetAll() {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  document.querySelectorAll('.step').forEach(el => {
+    el.classList.remove('done', 'open');
+  });
+  document.querySelectorAll('.criteria li').forEach(li => {
+    li.classList.remove('checked');
+  });
+  updateProgress();
+}
+
+// ─── INIT ────────────────────────────────────────────
+restoreState();
+updateCountdown();
+setInterval(updateCountdown, 60000);
+</script>
+</body>
+</html>
